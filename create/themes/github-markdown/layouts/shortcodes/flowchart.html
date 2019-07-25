@@ -1,0 +1,28 @@
+<div id="diagram-draw" align="center"></div>
+<script id="code">
+	{{ safeHTML .Inner }}
+	var source = document.getElementById( "code" ).innerText;
+	source = source.replace(/\\n/g, '\n');
+	source = source.replace(/\\u003e/g, '>');
+	source = source.replace(/\\"/g, '"');
+	var diagram = flowchart.parse( source );
+	diagram.drawSVG( 'diagram-draw' );
+</script>
+<!--
+めっちゃ無理やり書式合わせて動いてる
+涙ぐましいことしたくないなら、
+shortcodeを使わずに
+直接htmlに下記を書く。
+どうも {{ safeHTML .Inner }}で読み込んでくるときに、
+文字ーコード回り？で勝手に変換が起きるみたい。
+
+<script id="code">
+	フローチャートの記述
+</script>
+<div id="diagram-draw"></div>
+<script>
+	var source = document.getElementById( "code" ).innerText;
+	var diagram = flowchart.parse( source );
+	diagram.drawSVG( 'diagram-draw' );
+</script>
+-->
