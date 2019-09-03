@@ -4,7 +4,7 @@
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 echo $SCRIPT_DIR
 cd $SCRIPT_DIR
-pwd
+#pwd
 
 # ./*.mdがあるか、1つでもあればいい
 ls *.md > /dev/null 2>&1
@@ -19,27 +19,38 @@ if [ $? != 0 ]; then
 fi
 
 # mdファイルの名前をリストにする
-for file in *.md; do
-	md+=(${file%.*})
-done
 
-echo ${md[@]}
-#exit 0
+md=()
+while read mdfile
+do
+	mdtmp1="${mdfile%.*}" # 拡張子削除
+	mdtmp2="${mdtmp1#./}"  # 行頭の./を削除
+	#mdtmp3=`echo -n $mdtmp2 | tr ' ' '_'`
+	#md+=("$mdtmp3")   # 半角空白をアンダースコアに変換
+	mdtmp3=`echo -n $mdtmp2 | tr ' ' '-'`
+	md+=("$mdtmp3")   # 半角空白をハイフンに変換
+	
+	cp $mdfile $mdtmp3
+done < <(find . -maxdepth 1 -name '*.md')
+#echo "${md[@]}"
+
+
 
 # contentの中身をクリア
 mkdir create/content > /dev/null 2>&1
 # contentにmdファイルを移動
-cp -rf *.md create/content/ > /dev/null 2>&1
-cp -rf *.png create/content/ > /dev/null 2>&1
-cp -rf *.jpg create/content/ > /dev/null 2>&1
+cp -rf $SCRIPT_DIR/*.md create/content/ > /dev/null 2>&1
+#cp -rf *.png create/content/ > /dev/null 2>&1
+#cp -rf *.jpg create/content/ > /dev/null 2>&1
+
 
 # htmlファイルを生成
-cd create
+cd $SCRIPT_DIR/create
 	#which hugo
 	#echo $?
 	flag=`which hugo > /dev/null 2>&1; echo $?`
 	if [ $flag -eq 1 ]; then
-		bin=./hugo.exe
+		bin=$SCRIPT_DIR/create/hugo.exe
 	else
 		bin=hugo
 	fi
@@ -52,28 +63,24 @@ cd create
 	
 	# 生成されたindex.htmlファイルの名前を書き換え、
 	# mdファイルと同じディレクトリに持っていく
-	
-	cd public
-		for file in "${md[@]}"; do
-			cd $file
-				cp index.html ${file}.html
-				cp	${file}.html ../../../
-				cd ..
-		done
-		cd ..
-	cd ..
+
+	for file in "${md[@]}"; do
+		echo "cp $SCRIPT_DIR/create/public/$file/index.html $SCRIPT_DIR/${file}.html"
+		cp $SCRIPT_DIR/create/public/$file/index.html $SCRIPT_DIR/${file}.html
+	done
 
 echo "htmlファイルを生成しました。"
 
+
 # 中間ファイルをクリア
 echo "中間ファイルをクリアします"
-rm -rf create/content \
-	create/resources \
-	create/public \
-	create/data \
-	create/static \
-	create/layouts \
-	create/archetypes > /dev/null 2>&1
+rm -rf $SCRIPT_DIR/create/content \
+	$SCRIPT_DIR/create/resources \
+	$SCRIPT_DIR/create/public \
+	$SCRIPT_DIR/create/data \
+	$SCRIPT_DIR/create/static \
+	$SCRIPT_DIR/create/layouts \
+	$SCRIPT_DIR/create/archetypes > /dev/null 2>&1
 
 # _がhugoによって誤変換されてしまう場合がかなりあるので、
 # とりあえず雑に置換する
@@ -126,3 +133,6 @@ done
 echo "終了します。"
 sleep 2
 exit
+eep 2
+exit
+
