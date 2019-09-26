@@ -12,7 +12,7 @@ html単体で画像を含む、つまり可搬性のある文書が生成でき�
 例えば
 
 * [readme.md](https://xcd0.com/static/20190926/readme.md)
-* [build_on_win10.gif](https://xcd0.com/static/20190926/build_on_win10.gif)
+* [build_on_win10.gif](https://xcd0.com/static/20190926/build.gif)
 
 から
 
