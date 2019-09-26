@@ -10,10 +10,14 @@ markdownのファイルからhtmlを生成します。
 html単体で画像を含む、つまり可搬性のある文書が生成できます。
 
 例えば
-* [](https://xcd0.com/static/20190926/readme.md)
-* [](https://xcd0.com/static/20190926/build_on_win10.gif)
+
+* [readme.md](https://xcd0.com/static/20190926/readme.md)
+* [build_on_win10.gif](https://xcd0.com/static/20190926/build_on_win10.gif)
+
 から
-* [](https://xcd0.com/static/20190926/readme.html)
+
+* [readme.html](https://xcd0.com/static/20190926/readme.html)
+
 を生成できます。
 
 
