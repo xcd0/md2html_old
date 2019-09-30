@@ -60,7 +60,7 @@ Windows10 MSYS2 での実行例 gif
 	* LinuxやWSLだと[Linuxbrew](https://docs.brew.sh/Homebrew-on-Linux)がおすすめ。`brew install hugo`で終わり。
 
 * 生成するhtmlの外観をカスタマイズしたい場合、Hugoの知識が必要。  
-すごく雑に言えば`md2html/create/themes/github-markdown/layouts`当たりを編集すればよい。  
+すごく雑に言えば`md2html/create/themes/github-markdown/layouts`あたりを編集すればよい。  
 htmlは`md2html/create/themes/github-markdown/layouts`以下の
 	* `default/single.html`
 	* `partials/markdown.mini.css`  
