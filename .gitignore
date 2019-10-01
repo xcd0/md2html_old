@@ -1,3 +1,11 @@
+hugo
+hugo.exe
+*.zip
+*.zip.*
+
+*.log
+*.txt
+
 *~
 *.swp
 .~lock*
