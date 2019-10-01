@@ -20,6 +20,9 @@ html単体で画像を含む、つまり可搬性のある文書が生成でき�
 
 を生成できます。
 
+メインの処理はGolangで書いており、単体で動作するバイナリを同梱しているので  
+基本的にどのOSでもbashが動けば動作します。
+
 
 ## 使用方法
 
@@ -29,6 +32,7 @@ html単体で画像を含む、つまり可搬性のある文書が生成でき�
 1. `build.sh`を実行する。
 	* ただのShellscriptなので、LinuxやMacならそのまま実行すればよい。  
 	ただしHugoのインストールが必要。  
+	[Hugoのバイナリ](https://github.com/gohugoio/hugo/releases)があればよい。
 	詳細は下記の[使用条件](#使用条件)を参照。
 	
 	* WindowsではMSYSやWSLから実行する必要がある。  
@@ -55,7 +59,9 @@ Windows10 MSYS2 での実行例 gif
 
 * [hugo](https://gohugo.io/)が動くこと。
 	* windows用のバイナリは同梱している。
-	* ほかのOSでは[Quick Start](https://gohugo.io/getting-started/quick-start/)を参考に導入する。
+	* [https://github.com/gohugoio/hugo/releases](https://github.com/gohugoio/hugo/releases)に最新版のバイナリが置いてある。
+		* 別に新しい必要はない。
+	* [Quick Start](https://gohugo.io/getting-started/quick-start/)を参考に導入してもよい。
 	* macで[Homebrew](https://brew.sh/index_ja)が動くなら`brew install hugo`で終わり。
 	* LinuxやWSLだと[Linuxbrew](https://docs.brew.sh/Homebrew-on-Linux)がおすすめ。`brew install hugo`で終わり。
 
