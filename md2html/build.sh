@@ -245,6 +245,8 @@ function embed_image () { # {{{
 		html=${html_ext%.*}
 		img=()
 		base=()
+
+		# OS別で正しいバイナリを叩く
 		if [ "$COMSPEC" != "" ]; then
 			base64=./create/base64/base64_win
 		elif [ "$(uname)" == "Darwin" ]; then
@@ -252,6 +254,10 @@ function embed_image () { # {{{
 		elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
 			base64=./create/base64/base64_linux
 		fi
+
+		# もし特殊なOS、CPUの場合はこの辺に
+		# base64=ビルドしたバイナリへのパス みたいな感じで記載する
+
 		# png jpg gifファイルの名前をリストにする
 		for file in `\find . -maxdepth 2 -name '*.jpg'`; do
 			img+=($file)
