@@ -100,8 +100,7 @@ function dl_hugo () { # {{{
 function search_hugo () { #{{{
 	which hugo
 	flag=$?
-	#if [ $flag -eq 0 ]; then
-	if [ $flag -ne 0 ]; then
+	if [ $flag -eq 0 ]; then
 		# hugo がインストールされている
 		hugo=`which hugo`
 		$hugo version | tee -a log.txt
