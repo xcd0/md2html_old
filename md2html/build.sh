@@ -11,6 +11,12 @@ echo "--------------------------------------------------------------------------
 
 # contentの中身をクリア
 mkdir create/content > /dev/null 2>&1
+
+# index.mdがあると問題がある..
+if [ -e index.md ]; then
+	mv index.md index_.md
+fi
+
 # contentにmdファイルを移動
 cp -rf $SCRIPT_DIR/*.md create/content/ > /dev/null 2>&1
 
@@ -288,6 +294,13 @@ function embed_image () { # {{{
 echo "画像をbase64に変換してhtmlに埋め込みます" | tee -a log.txt
 
 embed_image
+
+# index.mdがあると問題がある..
+# で置換したので戻す
+if [ -e index_.md ]; then
+	mv index_.md index.md
+	mv index_.html index.html
+fi
 
 echo "--------------------------------------------------------------------------------" | tee -a log.txt
 echo "マークダウンからhtmlファイルの生成処理が完了しました。" | tee -a log.txt
