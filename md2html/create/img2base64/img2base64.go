@@ -50,13 +50,13 @@ func main() {
 			base64code := encode(flag.Arg(1))
 			ext := filepath.Ext(flag.Arg(1))
 			if ext == ".gif" {
-				base64codetag := "<img src=\"data:image/gif;base64," + base64code + "\">"
+				base64codetag := "<center><img src=\"data:image/gif;base64," + base64code + "\"></center>"
 				output += base64codetag + "\n"
 			} else if ext == ".png" {
-				base64codetag := "<img src=\"data:image/png;base64," + base64code + "\">"
+				base64codetag := "<center><img src=\"data:image/png;base64," + base64code + "\"></center>"
 				output += base64codetag + "\n"
 			} else if ext == ".jpg" || ext == ".jpeg" {
-				base64codetag := "<img src=\"data:image/jpeg;base64," + base64code + "\">"
+				base64codetag := "<center><img src=\"data:image/jpeg;base64," + base64code + "\"></center>"
 				output += base64codetag + "\n"
 			} else {
 				output += line + "\n"
