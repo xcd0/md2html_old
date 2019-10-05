@@ -1,5 +1,6 @@
 hugo
 hugo.exe
+*.tar.*
 *.zip
 *.zip.*
 

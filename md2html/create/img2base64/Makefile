@@ -1,7 +1,7 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
-BINARY_NAME=base64
+BINARY_NAME=img2base64
 BINARY_LINUX=$(BINARY_NAME)_linux
 BINARY_MAC=$(BINARY_NAME)_mac
 BINARY_WIN=$(BINARY_NAME)_win
@@ -49,4 +49,3 @@ build-windows:
 #	mv base64_mac base64
 #endif
 
-endif

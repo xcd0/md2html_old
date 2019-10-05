@@ -76,7 +76,8 @@ function dl_hugo () { # {{{
 	elif [ "$(uname)" == 'Darwin' ]; then
 		echo -n "macOS用の" | tee -a log.txt
 		echo "Hugo 0.5.8.3をダウンロードします。(約12MB)" | tee -a log.txt
-		wget -O - https://github.com/gohugoio/hugo/releases/download/v0.58.3/hugo_0.58.3_macOS-64bit.tar.gz | tar xzvf - hugo
+		curl -# -OL https://github.com/gohugoio/hugo/releases/download/v0.58.3/hugo_0.58.3_macOS-64bit.tar.gz
+		tar xzvf hugo_0.58.3_macOS-64bit.tar.gz hugo
 	elif [ "$(expr substr $(uname -s) 1 5)" == 'Linux' ]; then
 		echo "Linux用の" | tee -a log.txt
 		echo "Hugo 0.5.8.3をダウンロードします。(約12MB)" | tee -a log.txt
@@ -119,7 +120,7 @@ function search_hugo () { #{{{
 			# Hugoのバイナリが置いてある
 			# 正しく動くバイナリかどうかたたいてみる
 			$hugo version > /dev/null 2>&1
-			check=`$?`
+			check=$?
 			if [ $check -eq 0 ]; then
 				# DLされているHugoのバイナリを使う
 				$hugo version | tee -a log.txt
@@ -132,12 +133,15 @@ function search_hugo () { #{{{
 				# DLされているHugoのバイナリが...
 				# 削除する
 				echo "$SCRIPT_DIR/create/にあるHugoのバイナリが正しくありません" | tee -a log.txt
-				if [ -e $SCRIPT_DIR/create/hugo.exe ]; then
-					rm $SCRIPT_DIR/create/hugo.exe | tee -a log.txt
+				echo "削除してダウンロードしますか？(y/N)"
+				read flag
+				if [ flag == y ]; then
+					if [ -e $SCRIPT_DIR/create/hugo.exe ]; then
+						rm $SCRIPT_DIR/create/hugo.exe | tee -a log.txt
+					fi
+					rm $SCRIPT_DIR/create/hugo | tee -a log.txt
+					dl_hugo
 				fi
-				rm $SCRIPT_DIR/create/hugo | tee -a log.txt
-				echo "システムにHugoがインストールされていません。" | tee -a log.txt
-				dl_hugo
 			fi
 		else
 			echo "システムにHugoがインストールされていません。" | tee -a log.txt
@@ -206,7 +210,6 @@ echo "htmlファイルを生成します" | tee -a log.txt
 
 create_html
 
-
 echo "--------------------------------------------------------------------------------" | tee -a log.txt
 
 # _がhugoによって誤変換されてしまう場合がかなりあるので、
@@ -242,46 +245,42 @@ function embed_image () { # {{{
 
 	for html_ext in `\find . -maxdepth 1 -name '*.html'`; do
 		html=${html_ext%.*}
-		img=()
-		base=()
 
 		# OS別で正しいバイナリを叩く
 		if [ "$COMSPEC" != "" ]; then
-			base64=./create/base64/base64_win
+			gif2base64=./create/img2base64/img2base64_win
 		elif [ "$(uname)" == "Darwin" ]; then
-			base64=./create/base64/base64_mac
+			gif2base64=./create/img2base64/img2base64_mac
 		elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
-			base64=./create/base64/base64_linux
+			gif2base64=./create/img2base64/img2base64_linux
 		fi
+		echo $gif2base64
+		chmod +x $gif2base64
 
 		# もし特殊なOS、CPUの場合はこの辺に
 		# base64=ビルドしたバイナリへのパス みたいな感じで記載する
 
+		# 一旦コピる
 		# png jpg gifファイルの名前をリストにする
 		for file in `\find . -maxdepth 2 -name '*.jpg'`; do
-			img+=($file)
-			base+=("data:image/jpeg;base64,"`$base64 $file`)
+			echo "jpg"
+			echo "$gif2base64 ${html}.html $file > ${html}_tmp.html"
+			$gif2base64 ${html}.html $file > ${html}_tmp.html
+			mv ${html}_tmp.html ${html}.html
 		done
 		for file in `\find . -maxdepth 2 -name '*.png'`; do
-			img+=($file)
-			base+=("data:image/png;base64,"`$base64 $file`)
+			echo "png"
+			echo "$gif2base64 ${html}.html $file > ${html}_tmp.html"
+			$gif2base64 ${html}.html $file > ${html}_tmp.html
+			mv ${html}_tmp.html ${html}.html
 		done
+
 		for file in `\find . -maxdepth 2 -name '*.gif'`; do
-			img+=($file)
-			base+=("data:image/gif;base64,"`$base64 $file`)
+			echo "$gif2base64 ${html}.html $file > ${html}_tmp.html"
+			$gif2base64 ${html}.html $file > ${html}_tmp.html
+			mv ${html}_tmp.html ${html}.html
+			cat ${html}.html
 		done
-		
-		imax=`expr ${#img[@]} - 1`
-		
-		cat ${html}.html > ${html}_tmp.html
-		for i in `seq 0 1 $imax`
-		do
-			echo ${img[$i]} | tee -a log.txt
-			cat ${html}_tmp.html | sed "s@${img[$i]}@${base[$i]}@g" > ${html}_tmp_.html
-			cat ${html}_tmp_.html > ${html}_tmp.html
-		done
-		mv ${html}_tmp.html ${html}.html
-		rm -rf ${html}_tmp*.html
 	done
 
 } # }}}
