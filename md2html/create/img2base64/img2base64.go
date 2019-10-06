@@ -13,10 +13,6 @@ import (
 
 func main() {
 
-	/*
-		1: 入力テキストファイル
-		2: デコードさあれるファイルパス
-	*/
 	flag.Parse()
 	fmt.Fprintf(os.Stderr, "a0 %v\n", flag.Arg(0))
 	fmt.Fprintf(os.Stderr, "a1 %v\n", flag.Arg(1))
@@ -29,38 +25,43 @@ func main() {
 	}
 	defer f.Close()
 
-	// <img src="./build_on_win10.gif" alt="" /></p>
+	// これが出力される
 	output := ""
 
 	scanner := bufio.NewScanner(f)
+	// 1行がめっちゃ長い時ようにbufferを大きく取っている
 	scanner.Buffer([]byte{}, math.MaxInt64)
 
-	input1 := "<img src="
-	input2 := flag.Arg(1)
 	for scanner.Scan() {
 		// ここで一行ずつ処理
 		line := scanner.Text()
-		b1 := strings.Index(line, input1)
-		b2 := strings.Index(line, input2)
-		if b1 == -1 {
-			output += line + "\n"
-		} else if b2 == -1 {
+		position := strings.Index(line, flag.Arg(1))
+		// flag.Arg(1)の文字列が含まれているかどうか調べる
+		if position == -1 {
 			output += line + "\n"
 		} else {
-			base64code := encode(flag.Arg(1))
+			// flag.Arg(1)をbase64でエンコードしたデータに置き換える
+			// base64でエンコードする
+			code := flag.Arg(1)
+			base64code := encode(code)
+			// ファイルの拡張子ごとにヘッダをつける
+			// gif,png,jpg,jpeg以外は元のファイル名になるようにしている
 			ext := filepath.Ext(flag.Arg(1))
 			if ext == ".gif" {
-				base64codetag := "<center><img src=\"data:image/gif;base64," + base64code + "\"></center>"
-				output += base64codetag + "\n"
+				code = "data:image/gif;base64," + base64code
 			} else if ext == ".png" {
-				base64codetag := "<center><img src=\"data:image/png;base64," + base64code + "\"></center>"
-				output += base64codetag + "\n"
+				code = "data:image/png;base64," + base64code
 			} else if ext == ".jpg" || ext == ".jpeg" {
-				base64codetag := "<center><img src=\"data:image/jpeg;base64," + base64code + "\"></center>"
-				output += base64codetag + "\n"
-			} else {
-				output += line + "\n"
+				code = "data:image/jpeg;base64," + base64code
 			}
+			// 前後を切り出す
+			pre := line[:position]
+			post := line[position+len(flag.Arg(1)):]
+
+			// くっつけて上書きする
+			line = pre + code + post
+			// 出力する
+			output += line + "\n"
 		}
 	}
 	if err = scanner.Err(); err != nil {
