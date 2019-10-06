@@ -47,9 +47,9 @@ html単体で画像を含む、つまり可搬性のある文書が生成でき�
 1. htmlファイルが生成される。
 	* このhtmlファイルには画像が埋め込まれているのでhtml単体で扱うことができる。
 
-Windows10 MSYS2 での実行例 gif 
+Windows10 MSYS2 での実行例 gif
 
-<center> ![](./build_on_win10.gif) </center>
+![](./build_on_win10.gif)
 
 ## 使用条件
 
