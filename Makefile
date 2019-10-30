@@ -1,12 +1,13 @@
 
-BIN=build/md2html
+BIN=md2html
+DST=build
 
 build: ./build/*
-	mkdir -p build
+	mkdir -p $(DST)
 ifeq ($(shell uname -o),Msys)
-	go build -o $(BIN).exe
+	go build -o $(DST)/$(BIN).exe
 else
-	go build -o $(BIN)
+	go build -o $(DST)/$(BIN)
 endif
 
 run: build
@@ -14,10 +15,19 @@ run: build
 
 all: build
 
-cross:
+release:
 	GOARCH=amd64 GOOS=windows go build -o $(BIN)_win.exe
 	GOARCH=amd64 GOOS=darwin go build -o $(BIN)_macOS
 	GOARCH=amd64 GOOS=linux go build -o $(BIN)_linux
+
+	cd $(DST)
+	mv $(BIN)_win.exe $(BIN).exe
+	zip md2html_binary_windows.zip md2html.exe
+	mv $(BIN)_macOS $(BIN)
+	zip md2html_binary_macOS.zip md2html
+	mv $(BIN)_linux $(BIN)
+	zip md2html_binary_linux.zip md2html
+
 
 
 clean:
