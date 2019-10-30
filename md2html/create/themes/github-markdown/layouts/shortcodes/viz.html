@@ -1,9 +1,0 @@
-<div class="viz" align="{{ if .Get "align" }}{{ .Get "align" }}{{ else }}center{{ end }}">
-<script type="text/vnd.graphviz" id="dot">
-    {{ safeHTML .Inner }}
-</script>
-<script>
-var viz = new Viz();
-var dot = document.getElementById('dot').innerHTML;
-viz.renderSVGElement(dot).then(function(element) { document.getElementById('{{ .Get "id" }}').appendChild(element); });
-</script>
