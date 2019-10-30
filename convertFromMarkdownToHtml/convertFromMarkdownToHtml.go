@@ -80,13 +80,12 @@ func Makeheader(fi Fileinfo) string { // {{{
 	});
 </script>
 
-<!-- オフラインの時様に取ってきたからいらない気がする -->
-<!--
+<!-- オンラインの時 -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
--->
 
-<script id="MathJax-script" async src="./md2html/md2html/MathJax-3.0.0/es5/tex-mml-chtml.js"></script>
+<!-- オフラインの時 -->
+<script id="MathJax-script" async src="MathJax-3.0.0/es5/tex-mml-chtml.js"></script>
 
 </head>
 <body>
@@ -96,11 +95,7 @@ func Makeheader(fi Fileinfo) string { // {{{
 
 func createMinifiedCss(fi Fileinfo) string { // {{{
 
-	outputCssPath := cssMinify.Minify(fi.Csspath)
-
-	// ファイルをOpenする
-	f, err := os.Open(outputCssPath)
-	defer f.Close()
+	_, err := os.Stat(fi.Csspath)
 	if err != nil {
 		// cssファイルがない
 		// デフォルトのCSSを使う
@@ -124,6 +119,12 @@ color:#f8f8f8;border:1px solid #ccc;font-size:13px;line-height:19px;overflow:aut
 ge-break-after:always;border:0!important;color:#fff;height:4px;padd`
 		return css
 	}
+
+	outputCssPath := cssMinify.Minify(fi.Csspath)
+
+	// ファイルをOpenする
+	f, err := os.Open(outputCssPath)
+	defer f.Close()
 
 	// 一気に全部読み取り
 	b, err := ioutil.ReadAll(f)
