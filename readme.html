@@ -41,19 +41,35 @@ html単体で画像やCSSを含んだ可搬性のある文書が生成できま�
 <p>例えば</p>
 
 <ul>
-<li><a href="https://xcd0.com/static/20190926/readme.md" rel="nofollow">readme.md</a></li>
-<li><a href="https://xcd0.com/static/20190926/build.gif" rel="nofollow">build_on_win10.gif</a></li>
-</ul>
-
-<p>から</p>
+<li><a href="https://static.xcd0.com/2019/10/30/readme.md" rel="nofollow">readme.md</a>
 
 <ul>
-<li><a href="https://xcd0.com/static/20190926/readme.html" rel="nofollow">readme.html</a></li>
+<li>文字コードをutf-8にしないと文字化けします。</li>
+<li>今見ているこのreadme.mdと同じファイルです。</li>
+</ul></li>
+<li><a href="https://static.xcd0.com/2019/10/30/markdown.css" rel="nofollow">markdown.css</a>
+
+<ul>
+<li>適応したいCSSファイルを与えることができます。</li>
+</ul></li>
+<li><a href="https://static.xcd0.com/2019/10/30/build_on_win10.gif" rel="nofollow">build_on_win10.gif</a>
+
+<ul>
+<li>jpg,png,gifなどを埋め込むことができます。</li>
+</ul></li>
 </ul>
 
-<p>を生成できます。</p>
+<p>これらのファイルから</p>
 
-<p>メインの処理はGolangで書いており、基本的にどのOSでもbashが動けば動作します。</p>
+<ul>
+<li><a href="https://static.xcd0.com/2019/10/30/readme.html" rel="nofollow">readme.html</a></li>
+</ul>
+
+<p>を生成できます。<br>
+この生成したhtmlファイルは上記の3つのファイルの情報をすべて含んだhtmlファイルです。<br>
+なのでこれ単体で他人に渡すことができます。</p>
+
+<p>メインの処理はGolangで書いており、基本的にどのOSでも動作します。</p>
 <h2><a name="使用方法" class="anchor" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95" rel="nofollow" aria-hidden="true"><span class="octicon octicon-link"></span></a>
 使用方法</h2>
 

@@ -15,16 +15,22 @@ html単体で画像やCSSを含んだ可搬性のある文書が生成できま�
 例えば
 
 * [readme.md](https://static.xcd0.com/2019/10/30/readme.md)
+	* 文字コードをutf-8にしないと文字化けします。
+	* 今見ているこのreadme.mdと同じファイルです。
 * [markdown.css](https://static.xcd0.com/2019/10/30/markdown.css)
+	* 適応したいCSSファイルを与えることができます。
 * [build_on_win10.gif](https://static.xcd0.com/2019/10/30/build_on_win10.gif)
+	* jpg,png,gifなどを埋め込むことができます。
 
-から
+これらのファイルから
 
 * [readme.html](https://static.xcd0.com/2019/10/30/readme.html)
 
-を生成できます。
+を生成できます。  
+この生成したhtmlファイルは上記の3つのファイルの情報をすべて含んだhtmlファイルです。  
+なのでこれ単体で他人に渡すことができます。
 
-メインの処理はGolangで書いており、基本的にどのOSでもbashが動けば動作します。
+メインの処理はGolangで書いており、基本的にどのOSでも動作します。
 
 
 ## 使用方法
