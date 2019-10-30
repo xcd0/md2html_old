@@ -1,5 +1,5 @@
 
-BIN=md2html_bin
+BIN=md2html
 
 build:
 ifeq ($(shell uname -o),Msys)
@@ -18,6 +18,6 @@ all: build
 
 
 clean:
-	rm $(BIN)*
-	rm *.html
+	rm -f $(BIN)
+	rm -f *.html
 

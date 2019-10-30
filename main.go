@@ -8,7 +8,7 @@ import ( // {{{
 	//"strings"
 
 	//"./html2pdf"
-	"./md2html"
+	"./convertFromMarkdownToHtml"
 ) // }}}
 
 func main() {
