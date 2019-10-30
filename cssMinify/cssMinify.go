@@ -15,7 +15,7 @@ func Minify(inputFilePath string) string {
 	flag.Parse()
 	// 第一引数にマークダウンのファイルのパスを受け取る
 	// 引数を元に構造体を作る
-	fname, err := filepath.Abs(inputFilePath)
+	fname, _ := filepath.Abs(inputFilePath)
 	dname := filepath.Dir(fname)
 	//log.Println(fname)
 	//log.Println(dname)
@@ -23,10 +23,20 @@ func Minify(inputFilePath string) string {
 	//log.Println(outputCssPath)
 
 	// css を開く
+	_, err := os.Stat(fname)
+	if err != nil {
+		// cssファイルがない
+		// デフォルトのCSSを使う
+		// minifyしない
+		log.Println("error : do not exist css file")
+		log.Println(fname)
+		log.Println(err)
+		return "error : do not exist css file"
+	}
+
 	inputCssFp, err := os.Open(fname)
 	defer inputCssFp.Close()
 	if err != nil {
-		log.Println(err)
 		panic(err)
 	}
 
