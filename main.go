@@ -34,7 +34,6 @@ func main() {
 func makeHtmlByShurcooL(fi md2html.Fileinfo) { // {{{
 
 	fi.Flavor = "gfm"
-
 	// htmlを作成する
 	html, err := md2html.Makehtml(fi)
 	if err != nil {
@@ -42,6 +41,7 @@ func makeHtmlByShurcooL(fi md2html.Fileinfo) { // {{{
 		return
 	}
 
+	// 出力する
 	err = ioutil.WriteFile(fi.Htmlpath, []byte(html), 0644)
 	if err != nil {
 		// Openエラー処理
