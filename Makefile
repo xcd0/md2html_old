@@ -1,6 +1,7 @@
 
 BIN=md2html
 DST=build
+FLAGS=-ldflags="-w -s" -extldflags "-static" -a -tags netgo -installsuffix netgo
 
 .PHONY: build
 build:
@@ -17,11 +18,12 @@ run: build
 
 all: build
 
-release:
-	GOARCH=amd64 GOOS=windows go build -o $(DST)/$(BIN)_windows.exe
-	GOARCH=amd64 GOOS=darwin go build -o $(DST)/$(BIN)_macOS
-	GOARCH=amd64 GOOS=linux go build -o $(DST)/$(BIN)_linux
+release-build:
+	GOARCH=amd64 GOOS=windows go build -o $(DST)/$(BIN)_windows.exe $(FLAGS)
+	GOARCH=amd64 GOOS=darwin go build -o $(DST)/$(BIN)_macOS $(FLAGS)
+	GOARCH=amd64 GOOS=linux go build -o $(DST)/$(BIN)_linux $(FLAGS)
 
+release: release-build
 	cd $(DST) && \
 	mv $(BIN)_windows.exe $(BIN).exe && \
 	zip md2html_binary_windows.zip md2html.exe && \
