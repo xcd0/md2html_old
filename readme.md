@@ -4,6 +4,8 @@
 
 markdownのファイルからhtmlを生成します。  
 
+===
+
 * markdown.cssファイルがあればminifyしてhtmlに埋め込みます。
 
 * 序に画像ファイル(拡張子がjpg,png,gif)をbase64にエンコードして、  
@@ -21,6 +23,8 @@ html単体で画像やCSSを含んだ可搬性のある文書が生成できま�
 	* 適応したいCSSファイルを与えることができます。
 * [build_on_win10.gif](https://static.xcd0.com/2019/10/30/build_on_win10.gif)
 	* jpg,png,gifなどを埋め込むことができます。
+
+	* ![](./build_on_win10.gif)
 
 これらのファイルから
 
