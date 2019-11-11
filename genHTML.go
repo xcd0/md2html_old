@@ -27,11 +27,12 @@ type Fileinfo struct { // {{{
 	Html     string     // 生成したhtml本体が入る
 	Pdfpath  string     // 生成されるpdfファイルの出力先パス
 	Rep      [][]string // 置換対象文字列と置換文字列
+	TmpPath  string
 } // }}}
 
 func Makehtml(fi *Fileinfo) string { // {{{
 
-	header := Makeheader(*fi)
+	header := Makeheader(*fi, "")
 	body := Makebody(*fi)
 	footer := Makefooter()
 
@@ -60,9 +61,9 @@ func Argparse(arg string) Fileinfo { // {{{
 	return fi
 } // }}}
 
-func Makeheader(fi Fileinfo) string { // {{{
+func Makeheader(fi Fileinfo, csspath string) string { // {{{
 
-	header_css := createMinifiedCss(fi)
+	header_css := CreateMinifiedCss(csspath)
 
 	header1 := `<!DOCTYPE html>
 <html>
@@ -92,9 +93,9 @@ func Makeheader(fi Fileinfo) string { // {{{
 	return header1 + header_css + header2
 } // }}}
 
-func createMinifiedCss(fi Fileinfo) string { // {{{
+func CreateMinifiedCss(csspath string) string { // {{{
 
-	_, err := os.Stat(fi.Csspath)
+	_, err := os.Stat(csspath)
 	if err != nil {
 		// cssファイルがない
 		// デフォルトのCSSを使う
@@ -119,7 +120,7 @@ ge-break-after:always;border:0!important;color:#fff;height:4px;padd`
 		return css
 	}
 
-	outputCssPath := Minify(fi.Csspath)
+	outputCssPath := Minify(csspath)
 
 	// ファイルをOpenする
 	f, err := os.Open(outputCssPath)
