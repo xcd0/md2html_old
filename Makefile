@@ -1,7 +1,7 @@
 
 BIN=md2html
 DST=build
-FLAGS=-ldflags="-w -s" -extldflags "-static" -a -tags netgo -installsuffix netgo
+FLAGS=-ldflags='-w -s -extldflags "-static"' -a -tags netgo -installsuffix netgo
 
 .PHONY: build
 build:
@@ -46,3 +46,10 @@ clean:
 	rm -f *.html
 	rm -f *.mini.css
 
+get:
+	go get -u -v github.com/google/go-github/github
+	go get -u -v github.com/russross/blackfriday
+	go get -u -v github.com/shurcooL/github_flavored_markdown
+	go get -u -v github.com/tdewolff/minify
+	go get -u -v github.com/tdewolff/minify/css
+	go get -u -v github.com/xcd0/go-nkf

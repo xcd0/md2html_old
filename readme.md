@@ -4,8 +4,6 @@
 
 markdownのファイルからhtmlを生成します。  
 
-===
-
 * markdown.cssファイルがあればminifyしてhtmlに埋め込みます。
 
 * 序に画像ファイル(拡張子がjpg,png,gif)をbase64にエンコードして、  
