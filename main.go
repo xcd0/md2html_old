@@ -21,7 +21,7 @@ func main() {
 	fi := Argparse(flag.Arg(0))
 
 	// そのまま印刷したら単純な文書になる印刷用htmlを出力
-	makeHtmlByShurcooL(&fi)
+	makeHtml(&fi)
 
 	// 独自置換対象文字列
 	makeReplaceStrings(&fi)
@@ -30,8 +30,8 @@ func main() {
 	// 独自拡張の置換と画像のbase64置換
 	filter2Html(&fi)
 
-	// スライド用htmlにする
-	//makeHtmlForSlide(fi)
+	// スライド用htmlを生成する
+	MakeHtmlForSlide(&fi)
 
 	// pdfをつくる
 	/*
@@ -40,11 +40,9 @@ func main() {
 	*/
 }
 
-func makeHtmlByShurcooL(fi *Fileinfo) { // {{{
+func makeHtml(fi *Fileinfo) { // {{{
 
-	//fi.Flavor = "gfm"
-	fi.Flavor = "github"
-	// htmlを作成する
+	fi.Flavor = ""
 	fi.Html = Makehtml(fi)
 
 	//log.Println(fi.Html)
@@ -62,8 +60,15 @@ func makeHtmlByShurcooL(fi *Fileinfo) { // {{{
 
 func filter2Html(fi *Fileinfo) { // {{{1
 
+	//csspath := fi.Dpath + "slide.css"
+	csspath := fi.Dpath + "markdown.css"
+	header := Makeheader(*fi, csspath)
+	body := Makebody(*fi)
+	footer := Makefooter()
+
 	// fi.Htmlを置換していく
 	// 改行で分割
+	fi.Html = header + body + footer
 	lines := strings.Split(fi.Html, "\n")
 
 	output := ""
@@ -99,7 +104,7 @@ func makeReplaceStrings(fi *Fileinfo) { // {{ {
 	fi.Rep = append(fi.Rep, []string{"===", "<div style='page-break-before:always'></div>"})
 } // }} }
 
-func replaceImg(fi *Fileinfo) {
+func replaceImg(fi *Fileinfo) { // {{{
 	// 画像の置き換え
 	// 画像を探す
 	outputList := searchTargetFile(*fi)
@@ -259,7 +264,7 @@ func replaceImg(fi *Fileinfo) {
 
 	// 上書き
 	fi.Html = output
-}
+} // }}}
 
 func searchTargetFile(fi Fileinfo) []string { // {{{1
 
@@ -312,12 +317,12 @@ func EncodeBase64(str string) string { // {{{
 	return base64.StdEncoding.EncodeToString(data)
 } // }}}
 
-type imgPath struct {
-	path   string
-	length int
-}
+func sortStirngsLen(in []string) []string { // {{{
 
-func sortStirngsLen(in []string) []string {
+	type imgPath struct {
+		path   string
+		length int
+	}
 
 	lengthCount := make([]imgPath, len(in))
 	for i, str := range in {
@@ -332,4 +337,4 @@ func sortStirngsLen(in []string) []string {
 		out[i] = lengthCount[i].path
 	}
 	return out
-}
+} // }}}

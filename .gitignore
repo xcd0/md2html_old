@@ -1,5 +1,7 @@
 build
 
+*.exe
+
 *.tar.*
 *.zip
 *.zip.*
