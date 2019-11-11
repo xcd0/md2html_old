@@ -25,6 +25,7 @@ html単体で画像やCSSを含んだ可搬性のある文書が生成できま�
 	* jpg,png,gifなどを埋め込むことができます。
 
 	* ![](./build_on_win10.gif)
+	* ![](./img/build_on_win10.gif)
 
 これらのファイルから
 

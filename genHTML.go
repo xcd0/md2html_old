@@ -2,7 +2,7 @@ package main
 
 import ( // {{{
 	"context"
-	"errors"
+	//"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -16,27 +16,28 @@ import ( // {{{
 ) // }}}
 
 type Fileinfo struct { // {{{
-	Apath    string // 入力mdファイルの絶対パス
-	Dpath    string // 入力mdファイルのあるディレクトリのパス
-	Filename string // 入力mdファイルのファイル名
-	Basename string // 入力mdファイルのベースネーム 拡張子抜きの名前
-	Ext      string // 入力mdファイルの拡張子
-	Csspath  string // 入力Cssファイルの出力先パス
-	Htmlpath string // 生成されるhtmlファイルの出力先パス
-	Flavor   string // 生成に用いるmarkdownの方言
-	Html     string // 生成したhtml本体が入る
-	Pdfpath  string // 生成されるpdfファイルの出力先パス
+	Apath    string     // 入力mdファイルの絶対パス
+	Dpath    string     // 入力mdファイルのあるディレクトリのパス
+	Filename string     // 入力mdファイルのファイル名
+	Basename string     // 入力mdファイルのベースネーム 拡張子抜きの名前
+	Ext      string     // 入力mdファイルの拡張子
+	Csspath  string     // 入力Cssファイルの出力先パス
+	Htmlpath string     // 生成されるhtmlファイルの出力先パス
+	Flavor   string     // 生成に用いるmarkdownの方言
+	Html     string     // 生成したhtml本体が入る
+	Pdfpath  string     // 生成されるpdfファイルの出力先パス
+	Rep      [][]string // 置換対象文字列と置換文字列
 } // }}}
 
-func Makehtml(fi Fileinfo) (string, error) { // {{{
+func Makehtml(fi *Fileinfo) string { // {{{
 
-	header := Makeheader(fi)
-	body, err := Makebody(fi)
+	header := Makeheader(*fi)
+	body := Makebody(*fi)
 	footer := Makefooter()
 
 	fi.Html = header + body + footer
 
-	return fi.Html, err
+	return fi.Html
 } // }}}
 
 func Argparse(arg string) Fileinfo { // {{{
@@ -135,7 +136,7 @@ ge-break-after:always;border:0!important;color:#fff;height:4px;padd`
 	return string(b)
 } // }}}
 
-func Makebody(fi Fileinfo) (string, error) { // {{{1
+func Makebody(fi Fileinfo) string { // {{{1
 
 	// 前提条件チェック {{{
 	if fi.Ext != ".md" {
@@ -145,7 +146,7 @@ func Makebody(fi Fileinfo) (string, error) { // {{{1
 			"%s は拡張子が.mdではありません。\n"+
 				"拡張子が.mdのマークダウンのファイルを指定してください。\n",
 			fi.Filename)
-		return "", errors.New("The Extention of this file is not .md")
+		return ""
 	}
 
 	bytemd, err := ioutil.ReadFile(fi.Apath)
@@ -155,7 +156,7 @@ func Makebody(fi Fileinfo) (string, error) { // {{{1
 			"ファイル%vが読み込めません\n",
 			fi.Filename)
 		log.Println(err)
-		return "", err
+		return ""
 	}
 
 	// ファイルの文字コード変換
@@ -166,7 +167,7 @@ func Makebody(fi Fileinfo) (string, error) { // {{{1
 			"文字コード変換に失敗しました\n"+
 				"utf8を使用してください\n")
 		log.Println(err)
-		return "", err
+		return ""
 	}
 	stringmd, err := nkf.ToUtf8(string(bytemd), charset)
 	bytemd = []byte(stringmd)
@@ -176,7 +177,7 @@ func Makebody(fi Fileinfo) (string, error) { // {{{1
 			"文字コード変換に失敗しました\n"+
 				"utf8を使用してください\n")
 		log.Println(err)
-		return "", err
+		return ""
 	}
 	// }}}
 
@@ -192,7 +193,7 @@ func Makebody(fi Fileinfo) (string, error) { // {{{1
 
 	body := string(bytebody)
 
-	return body, err
+	return body
 
 } //}}}1
 
