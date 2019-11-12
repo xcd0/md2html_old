@@ -1,10 +1,11 @@
-build
 
 *.exe
 
 *.tar.*
-#*.zip
+*.zip
 *.zip.*
+build/*
+build_ori/*
 
 *.log
 *.txt
