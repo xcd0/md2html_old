@@ -3,7 +3,7 @@ build
 *.exe
 
 *.tar.*
-*.zip
+#*.zip
 *.zip.*
 
 *.log
