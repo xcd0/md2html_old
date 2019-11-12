@@ -9,6 +9,8 @@ build
 *.log
 *.txt
 
+test/.tmp
+
 *~
 *.swp
 .~lock*
