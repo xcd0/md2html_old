@@ -116,7 +116,7 @@ body{font-family:Helvetica,arial,sans-serif;font-size:14px;line-height:1.8;paddi
 	}
 
 	minifiedCss := Minify(csspath)
-	fmt.Println(minifiedCss)
+	//fmt.Println(minifiedCss)
 
 	//fmt.Println(outputCssPath)
 
