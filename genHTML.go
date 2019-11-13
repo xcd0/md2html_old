@@ -1,7 +1,7 @@
 package main
 
 import ( // {{{
-	"context"
+
 	"encoding/base64"
 
 	//"errors"
@@ -13,9 +13,10 @@ import ( // {{{
 	"regexp"
 	"strings"
 
-	"github.com/google/go-github/github"
-	//"github.com/microcosm-cc/bluemonday"
+	//"github.com/google/go-github/github"
 	//"github.com/russross/blackfriday"
+	"gopkg.in/russross/blackfriday.v2"
+
 	gfm "github.com/shurcooL/github_flavored_markdown"
 	"github.com/xcd0/go-nkf"
 ) // }}}
@@ -528,7 +529,35 @@ func Makebody(mdpath string, rImgPath []string, t string) string { // {{{1
 	//body := string(blackfriday.MarkdownBasic([]byte(stringmd)))
 	//body := string(bluemonday.UGCPolicy().SanitizeBytes(blackfriday.Run([]byte(stringmd))))
 
-	bytebody, _ := shurcooL_GFM([]byte(stringmd))
+	//bytebody, _ := shurcooL_GFM([]byte(stringmd))
+	//bytebody := string(blackfriday.MarkdownBasic([]byte(stringmd)))
+
+	commonHtmlFlags := 0 |
+		blackfriday.UseXHTML |
+		blackfriday.Smartypants |
+		blackfriday.SmartypantsFractions |
+		blackfriday.SmartypantsDashes |
+		blackfriday.SmartypantsLatexDashes
+
+	extensions := 0 |
+		blackfriday.NoIntraEmphasis |
+		blackfriday.Tables |
+		blackfriday.FencedCode |
+		blackfriday.Autolink |
+		blackfriday.Strikethrough |
+		blackfriday.AutoHeadingIDs |
+		blackfriday.HeadingIDs |
+		blackfriday.BackslashLineBreak |
+		blackfriday.DefinitionLists
+
+	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
+		Flags: commonHtmlFlags,
+	})
+	opt := []blackfriday.Option{
+		blackfriday.WithRenderer(renderer),
+		blackfriday.WithExtensions(extensions),
+	}
+	bytebody := string(blackfriday.Run([]byte(stringmd), opt...))
 	body := string(bytebody)
 
 	// 独自記法の置換
@@ -562,12 +591,14 @@ func Makefooter() string { // {{{
 	return footer
 } // }}}
 
+/*
 func gitHubAPI(md []byte) ([]byte, error) { // {{{
 	client := github.NewClient(nil)
 	opt := &github.MarkdownOptions{Mode: "gfm", Context: "google/go-github"}
 	body, _, err := client.Markdown(context.Background(), string(md), opt)
 	return []byte(body), err
 } // }}}
+*/
 
 func shurcooL_GFM(md []byte) ([]byte, error) { // {{{
 

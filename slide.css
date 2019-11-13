@@ -176,7 +176,7 @@ table {
   padding: 0;
   border-spacing: 2px;
   border-collapse: collapse;
-  width: 80%;
+  max-width: 90%;
   margin: auto
 }
 
@@ -252,9 +252,7 @@ pre code, pre tt {
 }
 
 .main-content {
-  max-width: 50pc;
-  margin: auto;
-  padding-bottom: 50px
+	max-height: 100vh;
 }
 
 hr {
