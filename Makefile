@@ -1,7 +1,7 @@
 
 BIN=md2html
 DST=build
-FLAGS=-ldflags='-w -s -extldflags "-static"' -a -tags netgo -installsuffix netgo
+FLAGS=-ldflags='-H windowsgui -w -s -extldflags "-static"' -a -tags netgo -installsuffix netgo
 
 .PHONY: build
 build:
@@ -12,9 +12,8 @@ else
 	go build -o $(DST)/$(BIN)
 endif
 
-
 run: build
-	./$(BIN) README.md
+	./$(DST)/$(BIN) readme.md
 
 all: build
 

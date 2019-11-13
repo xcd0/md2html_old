@@ -5,6 +5,7 @@ import ( // {{{
 	"fmt"
 	"io/ioutil"
 	"regexp"
+
 	//"log"
 	"os"
 	"path/filepath"
@@ -18,7 +19,18 @@ func main() {
 	flag.Parse()
 	// 第一引数にマークダウンのファイルのパスを受け取る
 	// 引数を元に構造体を作る
-	fi := Argparse(flag.Arg(0))
+	mdpath := ""
+	switch flag.NArg() {
+	case 0:
+		fmt.Printf("引数を指定してください。\n")
+		mdpath = "readme.md"
+	case 1:
+		mdpath = flag.Arg(0)
+	default:
+		fmt.Printf("引数を指定してください。\n")
+	}
+
+	fi := Argparse(mdpath)
 
 	// wg4searchが終わるのを待ってwgをすすめる
 	wg := sync.WaitGroup{}
@@ -53,7 +65,7 @@ func main() {
 
 func makeHtml(fi *Fileinfo) { // {{{
 
-	fi.Html = Makeheader(*fi, "") + Makebody(fi.Apath, fi.RImgPath) + Makefooter()
+	fi.Html = Makeheader(*fi, "markdown.css") + Makebody(fi.Apath, fi.RImgPath, "doc") + Makefooter()
 
 	// 印刷用htmlを出力する
 	err := ioutil.WriteFile(fi.Htmlpath, []byte(fi.Html), 0644)

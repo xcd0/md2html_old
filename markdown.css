@@ -68,7 +68,6 @@ h1, h2 {
 }
 
 h2 {
-  padding-top: 20px;
   font-size: 30px;
   border-bottom: 2px solid #ccc
 }
@@ -92,17 +91,16 @@ h6 {
 }
 
 blockquote, dl, li, ol, p, pre, table, ul {
-  margin: 15px 0
+  margin: 10px 0
 }
 
 hr {
   border: 0 0 0;
-  color: #ccc;
   height: 4px;
   padding: 0
 }
 
-a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6, body>h1:first-child, body>h1:first-child+h2, body>h2:first-child, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6, bo dy>h5:first-child, body>h1:first-child, body>h1:first-child+h2, body>h2:first-child, body>h3:first-child, body>h4:first-child, body>h6:first-child {
   margin-top: 0;
   padding-top: 0
 }
@@ -123,10 +121,6 @@ ol:first-child, ul:first-child {
   margin-top: 0
 }
 
-ol:last-child, ul:last-child {
-  margin-bottom: 0
-}
-
 dl, dl dt {
   padding: 0
 }
@@ -134,6 +128,7 @@ dl, dl dt {
 dl dt {
   font-size: 14px;
   font-weight: 700;
+  font-weight: 1400;
   font-style: italic;
   margin: 15px 0 5px
 }
@@ -220,99 +215,10 @@ table tr td:first-child, table tr th:first-child {
   margin-top: 0
 }
 
-table tr td:last-child, table tr th:last-child {
-  margin-bottom: 0
-}
-
 img {
   max-width: 100%
 }
 
-span.frame, span.frame>span {
-  display: block;
-  overflow: hidden
-}
-
-span.frame>span {
-  border: 1px solid #ddd;
-  float: left;
-  margin: 13px 0 0;
-  padding: 7px;
-  width: auto
-}
-
-span.frame span img {
-  display: block;
-  float: left
-}
-
-span.frame span span {
-  clear: both;
-  color: #333;
-  display: block;
-  padding: 5px 0 0
-}
-
-span.align-center {
-  display: block;
-  overflow: hidden;
-  clear: both
-}
-
-span.align-center>span {
-  display: block;
-  overflow: hidden;
-  margin: 13px auto 0;
-  text-align: center
-}
-
-span.align-center span img {
-  margin: 0 auto;
-  text-align: center
-}
-
-span.align-right {
-  display: block;
-  overflow: hidden;
-  clear: both
-}
-
-span.align-right>span {
-  display: block;
-  overflow: hidden;
-  margin: 13px 0 0;
-  text-align: right
-}
-
-span.align-right span img {
-  margin: 0;
-  text-align: right
-}
-
-span.float-left {
-  display: block;
-  margin-right: 13px;
-  overflow: hidden;
-  float: left
-}
-
-span.float-left span {
-  margin: 13px 0 0
-}
-
-span.float-right {
-  display: block;
-  margin-left: 13px;
-  overflow: hidden;
-  float: right
-}
-
-span.float-right>span {
-  display: block;
-  overflow: hidden;
-  margin: 13px auto 0;
-  text-align: right
-}
 
 code, tt {
   margin: 0 2px;
@@ -332,7 +238,6 @@ pre code {
 }
 
 .highlight pre, pre {
-  background-color: #f8f8f8;
   border: 1px solid #ccc;
   font-size: 13px;
   line-height: 19px;
@@ -353,9 +258,14 @@ pre code, pre tt {
 }
 
 hr {
-  page-break-after: always;
   border: 0!important;
   color: #fff;
-  height: 4px;
-  padding: 0
+  height: 4px
+}
+
+.page_num {
+  border: 0;
+  position: absolute;
+  right: 10;
+  bottom: 10;
 }
