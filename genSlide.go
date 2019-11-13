@@ -61,7 +61,7 @@ func MakePdfForSlide(fi *Fileinfo) { // {{{
 		bodies = append(bodies, body)
 
 		// 画像を置換してhtmlを作る
-		html := Makeheader(*fi, fi.Dpath+"markdown.css") + body + Makefooter()
+		html := Makeheader(*fi, fi.Dpath+"slide.css") + body + Makefooter()
 
 		// スライド用htmlの1ページを出力する
 		if err := ioutil.WriteFile(htmlpath, []byte(html), 0644); err != nil {
@@ -76,9 +76,9 @@ func MakePdfForSlide(fi *Fileinfo) { // {{{
 		// 存在するので消す
 		if info.debug == false {
 			// デバッグ中でないとき
-			if err := os.Remove(info.tmp_path); err != nil {
+			if err := os.RemoveAll(info.tmp_path); err != nil {
 				fmt.Println(err)
-			} else {
+			} else if info.debug {
 				fmt.Println("debug:中間ディレクトリを削除していません")
 			}
 		}
@@ -342,10 +342,12 @@ func dividePage(info *Info) { // {{{
 			os.Mkdir(tmpdir, 0777)
 			//fmt.Printf("%vを作成しました", tmpdir)
 		}
-		tmpdir = filepath.Join(info.tmp_path, "body")
-		if _, err := os.Stat(tmpdir); os.IsNotExist(err) {
-			os.Mkdir(tmpdir, 0777)
-		}
+		/*
+			tmpdir = filepath.Join(info.tmp_path, "body")
+			if _, err := os.Stat(tmpdir); os.IsNotExist(err) {
+				os.Mkdir(tmpdir, 0777)
+			}
+		*/
 		tmpdir = filepath.Join(info.tmp_path, "html")
 		if _, err := os.Stat(tmpdir); os.IsNotExist(err) {
 			os.Mkdir(tmpdir, 0777)
@@ -479,12 +481,22 @@ func initInfo(info *Info, fi *Fileinfo) { // {{{
 	info.preamble = ""
 	info.output = ""
 	info.line = ""
-	info.debug = true
+	info.debug = false
 	info.state_code = false // これは```で囲まれている内側かどうかを保持する
 	info.tmp_path = ""      // .tmpフォルダの絶対パス
 	info.state_title = -1   // このページにh1~h3の表記があるか、あればその数値 なければ-1
 	info.tmp_path = filepath.Join(fi.Dpath, ".tmp")
 } // }}}
+
+// 正規表現オブジェクトのコンパイルは1回でよいのでグローバル領域で行う
+//regH1 := regexp.MustCompile(`^# `)
+var regH2 = regexp.MustCompile(`^## `)
+var regH3 = regexp.MustCompile(`^### `)
+var regCode = regexp.MustCompile("^```")
+var regPreamble = regexp.MustCompile(`^<!-- \$`)
+var regPageBreak1 = regexp.MustCompile(`^===$`)
+var regPageBreak2 = regexp.MustCompile(`^<!---->$`)
+var regPageBreak3 = regexp.MustCompile(`^<!-- === -->$`)
 
 func parseMd(info *Info, fi *Fileinfo) { // {{{
 
@@ -494,12 +506,6 @@ func parseMd(info *Info, fi *Fileinfo) { // {{{
 	// 改行で分ける
 	lines := strings.Split(ReadMd(fi.Filename), "\n")
 
-	//regH1 := regexp.MustCompile(`^# `)
-	regH2 := regexp.MustCompile(`^## `)
-	regH3 := regexp.MustCompile(`^### `)
-	regCode := regexp.MustCompile("^```")
-	regPreamble := regexp.MustCompile(`^<!-- \$`)
-	regPageBreak := regexp.MustCompile(`^===$`)
 	for _, info.line = range lines { // 一行ずつ
 		//fmt.Printf(":%v", info.line)
 		//for i, line := range lines { // 一行ずつ
@@ -507,7 +513,9 @@ func parseMd(info *Info, fi *Fileinfo) { // {{{
 		if regPreamble.MatchString(info.line) {
 			// マークダウンファイル内に記述されているプリアンブルを読み込む
 			readPreamble(info)
-		} else if regPageBreak.MatchString(info.line) {
+		} else if regPageBreak1.MatchString(info.line) ||
+			regPageBreak2.MatchString(info.line) ||
+			regPageBreak3.MatchString(info.line) {
 			// mdを===で分割する
 			// === は出力されない
 			dividePage(info)

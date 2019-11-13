@@ -1,16 +1,15 @@
 
 *.exe
-
 *.tar.*
 *.zip
 *.zip.*
-build/*
-build_ori/*
-
 *.log
 *.txt
 
 test/.tmp
+build/*
+build_ori/*
+*.mini.css
 
 *~
 *.swp
