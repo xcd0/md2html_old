@@ -5,7 +5,6 @@ import (
 
 	//"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -33,10 +32,7 @@ func Minify(inputFilePath string) string {
 		// cssファイルがない
 		// デフォルトのCSSを使う
 		// minifyしない
-		log.Println("error : do not exist css file")
-		log.Println(fname)
-		log.Println(err)
-		panic(err)
+		return "default"
 	}
 	// ファイル読み込み
 	bytes, err := ioutil.ReadFile(fname)
