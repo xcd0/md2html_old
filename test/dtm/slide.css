@@ -335,11 +335,8 @@ pre code, pre tt {
 }
 
 .main-content {
-  max-width: 50pc;
-  margin: auto;
-  padding-bottom: 50px
+	max-height: 100vh;
 }
-
 
 hr {
   border: 0 0 0;
