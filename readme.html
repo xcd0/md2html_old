@@ -21,6 +21,8 @@ body{font-family:Helvetica,arial,sans-serif;font-size:14px;line-height:1.8;paddi
 
 </head>
 <body>
+<!-- $title:"true" -->
+
 <h1 id="md2htmlについて">md2htmlについて</h1>
 
 <h2 id="概要">概要</h2>
@@ -200,13 +202,13 @@ html単体で画像やCSSを含んだ可搬性のある文書が生成できま�
 <tr>
 <td>〇</td>
 <td><code>&lt;!-- $page_number:&quot;真偽値&quot; --&gt;</code></td>
-<td>ページ番号を表記する。<br>初期状態では表紙はページ数を表示せず、<br>次のページを1ページ目とする。</td>
+<td>ページ番号を表記する。<br>表紙を0とし、初期状態では表紙にページ数を表示しない。</td>
 </tr>
 
 <tr>
 <td>〇</td>
 <td><code>&lt;!-- $set_page_number:&quot;数値&quot; --&gt;</code></td>
-<td>そのページのページ数を指定する。<br>表示には<code>$page_number</code>に<code>&quot;true&quot;</code>が<br>指定されている必要がある。</td>
+<td>そのページの表示されるページ数を指定する。</td>
 </tr>
 
 <tr>
@@ -237,6 +239,12 @@ html単体で画像やCSSを含んだ可搬性のある文書が生成できま�
 <td>〇</td>
 <td><code>&lt;!----&gt;</code></td>
 <td>ページ区切り。印刷時は改ページされる。</td>
+</tr>
+
+<tr>
+<td>〇</td>
+<td><code>&lt;!-- $footer:&quot;文字列&quot; --&gt;</code></td>
+<td>そのページの下部に表記したい文字列を指定。<br>基本的にhtmlタグ可能。</td>
 </tr>
 
 <tr>
@@ -279,8 +287,12 @@ html単体で画像やCSSを含んだ可搬性のある文書が生成できま�
 <li>改行コードも内部的には勝手に<code>LF</code>に変換している。</li>
 <li>ダメなら<code>UTF-8 LF</code>で保存する。</li>
 </ul></li>
+</ul>
 
-<li><p>特殊なOS、CPUで使用するしたい  (32bit版やアーキテクチャがx86系じゃないやつ)</p>
+<!---->
+
+<ul>
+<li>特殊なOS、CPUで使用するしたい  (32bit版やアーキテクチャがx86系じゃないやつ)
 
 <ul>
 <li>環境に合わせてビルドしてください。<code>Makefile</code>あるので<code>make</code>で一発です。</li>

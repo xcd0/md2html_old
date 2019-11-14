@@ -73,7 +73,7 @@ function prev(){
 	var page = document.getElementById(current);
 	//page.style.visibility = "hidden";
 	if( current_num == "0000" ){
-		current_num = zeroPadding( 0008 ,4);
+		current_num = zeroPadding( 0009 ,4);
 	} else {
 		current_num = zeroPadding( Number(current_num) - 1 ,4);
 	}
@@ -85,7 +85,7 @@ function prev(){
 function next(){
 	var page = document.getElementById(current);
 	//page.style.visibility = "hidden";
-	if( current_num == "0008" ){
+	if( current_num == "0009" ){
 		current_num = "0000"
 		current_num = zeroPadding( Number(current_num) + 1 ,4);
 	} else {
@@ -135,13 +135,11 @@ var here = function() {
 <!-- // $page_number:"true" -->
 <!-- // $page:"0" -->
 <!-- // $absolute_page:"0" -->
-<!-- // $h2:"none" -->
+<!-- // $h2:"概要" -->
 <!-- // $h3:"none" -->
 <!-- // $title:"true" -->
 <!-- // $state_title:"2" -->
 <!-- 自動生成されたプリアンブル ここまで -->
-<!-- 前のページから引き継いだタイトル ここから -->
-<!-- 前のページから引き継いだタイトル ここまで -->
 <h1 id="md2htmlについて">md2htmlについて</h1>
 <h2 id="概要">概要</h2>
 <p>markdownのファイルからhtmlを生成します。</p>
@@ -162,12 +160,13 @@ var here = function() {
 <!-- // $page_number:"true" -->
 <!-- // $page:"1" -->
 <!-- // $absolute_page:"1" -->
-<!-- // $h2:"none" -->
+<!-- // $h2:"概要" -->
 <!-- // $h3:"none" -->
 <!-- // $title:"true" -->
 <!-- // $state_title:"-1" -->
 <!-- 自動生成されたプリアンブル ここまで -->
 <!-- 前のページから引き継いだタイトル ここから -->
+<h2 id="概要">概要</h2>
 <!-- 前のページから引き継いだタイトル ここまで -->
 <p>例えば</p>
 <ul>
@@ -262,10 +261,10 @@ var here = function() {
 <!-- // $page_number:"true" -->
 <!-- // $page:"4" -->
 <!-- // $absolute_page:"4" -->
-<!-- // $h2:"独自記法" -->
+<!-- // $h2:"none" -->
 <!-- // $h3:"none" -->
 <!-- // $title:"true" -->
-<!-- // $state_title:"3" -->
+<!-- // $state_title:"2" -->
 <!-- 自動生成されたプリアンブル ここまで -->
 <!-- 前のページから引き継いだタイトル ここから -->
 <!-- 前のページから引き継いだタイトル ここまで -->
@@ -290,7 +289,7 @@ var here = function() {
 <!-- // $page_number:"true" -->
 <!-- // $page:"5" -->
 <!-- // $absolute_page:"5" -->
-<!-- // $h2:"独自記法" -->
+<!-- // $h2:"none" -->
 <!-- // $h3:"none" -->
 <!-- // $title:"true" -->
 <!-- // $state_title:"3" -->
@@ -337,13 +336,12 @@ var here = function() {
 <!-- // $page_number:"true" -->
 <!-- // $page:"6" -->
 <!-- // $absolute_page:"6" -->
-<!-- // $h2:"独自記法" -->
+<!-- // $h2:"none" -->
 <!-- // $h3:"none" -->
 <!-- // $title:"true" -->
 <!-- // $state_title:"-1" -->
 <!-- 自動生成されたプリアンブル ここまで -->
 <!-- 前のページから引き継いだタイトル ここから -->
-<h2 id="独自記法">独自記法</h2>
 <!-- 前のページから引き継いだタイトル ここまで -->
 <table>
 <thead>
@@ -372,12 +370,12 @@ var here = function() {
 <tr>
 <td>〇</td>
 <td><code>&lt;!-- $page_number:&quot;真偽値&quot; --&gt;</code></td>
-<td>ページ番号を表記する。<br>初期状態では表紙はページ数を表示せず、<br>次のページを1ページ目とする。</td>
+<td>ページ番号を表記する。<br>表紙を0とし、初期状態では表紙にページ数を表示しない。</td>
 </tr>
 <tr>
 <td>〇</td>
 <td><code>&lt;!-- $set_page_number:&quot;数値&quot; --&gt;</code></td>
-<td>そのページのページ数を指定する。<br>表示には<code>$page_number</code>に<code>&quot;true&quot;</code>が<br>指定されている必要がある。</td>
+<td>そのページの表示されるページ数を指定する。</td>
 </tr>
 <tr>
 <td>〇</td>
@@ -403,6 +401,11 @@ var here = function() {
 <td>〇</td>
 <td><code>&lt;!----&gt;</code></td>
 <td>ページ区切り。印刷時は改ページされる。</td>
+</tr>
+<tr>
+<td>〇</td>
+<td><code>&lt;!-- $footer:&quot;文字列&quot; --&gt;</code></td>
+<td>そのページの下部に表記したい文字列を指定。<br>基本的にhtmlタグ可能。</td>
 </tr>
 <tr>
 <td>×</td>
@@ -452,7 +455,26 @@ var here = function() {
 <li>改行コードも内部的には勝手に<code>LF</code>に変換している。</li>
 <li>ダメなら<code>UTF-8 LF</code>で保存する。</li>
 </ul></li>
-<li><p>特殊なOS、CPUで使用するしたい  (32bit版やアーキテクチャがx86系じゃないやつ)</p>
+</ul>
+<!--fin-->
+*/};
+const p0007 = here.toString().match(/\/\*([\s\S]*)\*\//).pop();
+var here = function() {
+/*<!--start--><!-- 自動生成されたプリアンブル ここから -->
+<!-- // $width:"841.89" -->
+<!-- // $height:"595.28" -->
+<!-- // $page_number:"true" -->
+<!-- // $page:"8" -->
+<!-- // $absolute_page:"8" -->
+<!-- // $h2:"none" -->
+<!-- // $h3:"none" -->
+<!-- // $title:"true" -->
+<!-- // $state_title:"-1" -->
+<!-- 自動生成されたプリアンブル ここまで -->
+<!-- 前のページから引き継いだタイトル ここから -->
+<!-- 前のページから引き継いだタイトル ここまで -->
+<ul>
+<li>特殊なOS、CPUで使用するしたい  (32bit版やアーキテクチャがx86系じゃないやつ)
 <ul>
 <li>環境に合わせてビルドしてください。<code>Makefile</code>あるので<code>make</code>で一発です。</li>
 <li>Golangでビルドできる環境なら動きます。
@@ -496,14 +518,14 @@ var here = function() {
 </table>
 <!--fin-->
 */};
-const p0007 = here.toString().match(/\/\*([\s\S]*)\*\//).pop();
+const p0008 = here.toString().match(/\/\*([\s\S]*)\*\//).pop();
 var here = function() {
 /*<!--start--><!-- 自動生成されたプリアンブル ここから -->
 <!-- // $width:"841.89" -->
 <!-- // $height:"595.28" -->
 <!-- // $page_number:"true" -->
-<!-- // $page:"8" -->
-<!-- // $absolute_page:"8" -->
+<!-- // $page:"9" -->
+<!-- // $absolute_page:"9" -->
 <!-- // $h2:"none" -->
 <!-- // $h3:"none" -->
 <!-- // $title:"true" -->
@@ -550,7 +572,7 @@ var here = function() {
 </table>
 <!--fin-->
 */};
-const p0008 = here.toString().match(/\/\*([\s\S]*)\*\//).pop();
+const p0009 = here.toString().match(/\/\*([\s\S]*)\*\//).pop();
 console.log(p0000);
 //-->
 </script>
