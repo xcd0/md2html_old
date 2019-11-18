@@ -102,15 +102,10 @@ func returnPreBody(maxpage int, css, postHead string) string { // {{{
 	</script>
 	<script type="text/x-mathjax-config">
 	MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$']]}});
+	</script>
 	<style type="text/css">
 	<!--
 	` + css + `
-.controller{
-	width : 50px;
-	position: absolute;
-	right: 0;
-	bottom: 0;
-}
 -->
 	</style>
 <script type="text/javascript">
@@ -124,62 +119,76 @@ function goto(to_page) {
 	page.style.visibility = "visible";
 }
 
-function resize() {
-	//document.documentElement.clientWidth
-	//document.documentElement.clientHeight
-
-	var c1 = document.getElementById('container');
-	var h = window.innerHeight;
-	var w = window.innerWidth;
-	h = (h - 100) * 0.9;
-	w = (w - 100) * 0.9;
-	c1.style.Width= w + 'px';
-	c1.style.Height = h + 'px';
-
-	/*
-	var c document.getElementById(current);
-	var tags c.getElementByTagName("img");
-	for(var i = 0; i < tags.length; i++){
-		tag[i].style.Width = w + 'px';
-		tag[i].style.Height = h + 'px';
-	}
-	*/
-}
-
 var current_num;
 var current;
 function zeroPadding(num,length){
 	return ('0000000000' + num).slice(-length);
 }
 
+function resizeFontSize(p,r) {
+	x = 100*r;
+	console.log("fontsize :"+p.style.fontSize);
+	p.style.fontSize = x + '%';
+ }
+
 function setPage(p){
-	var main = document.getElementById("container");
 	main.textContent = null;
 	main.innerHTML = eval(p);
+	location.hash = current_num;
+	if( main.clientHeight > document.documentElement.clientHeight ){
+		var x = 100;
+		resizeFontSize(main, 10000);
+		for( i= 0.9 ; main.clientHeight > document.documentElement.clientHeight; i *= 0.9 ) {
+			resizeFontSize(main, i);
+			console.log( "mainH : " + main.clientHeight + ", clientH : " + document.documentElement.clientHeight );
+		}
+		console.log( "mainH : " + main.clientHeight + ", clientH : " + document.documentElement.clientHeight );
+	}
 }
 
 function main() {
-	resize();
 	current_num = zeroPadding(0,4);
 	current = "p" + String(current_num);
-
+	main = document.getElementById("container");
 	setPage( current )
-	//goto(current);
 }
-window.onload = main;
 
+function init(){
+	var urlHash = location.hash;
+	if(urlHash){
+		if( isNaN(urlHash) ){
+			current = "p0000"
+			current_num = "0000"
+			location.hash = current_num;
+		} else {
+			current_num = zeroPadding(urlHash,4);
+			var n = Number(current_num);
+			if( n < 0 || n > ` + fmt.Sprintf("%d", maxpage-1) + ` ){
+				current = "p0000"
+				current_num = "0000"
+				location.hash = current_num;
+			}else{
+				current = "p" + String(current_num);
+			}
+		}
+		main = document.getElementById("container");
+		setPage( current )
+	} else {
+		main()
+	}
+}
 
-window.addEventListener('load', resize, false);
-window.addEventListener('resize', resize, false);
+window.onload = init;
+
+//window.addEventListener('load', resize, false);
+//window.addEventListener('resize', resize, false);
 
 function prev(){
 
 	var page = document.getElementById(current);
 	//page.style.visibility = "hidden";
 
-	if( current_num == "0000" ){
-		current_num = zeroPadding( ` + fmt.Sprintf("%04d", maxpage-1) + ` ,4);
-	} else {
+	if( current_num != "0000" ){
 		current_num = zeroPadding( Number(current_num) - 1 ,4);
 	}
 	current = "p" + current_num;
@@ -193,10 +202,7 @@ function next(){
 	var page = document.getElementById(current);
 	//page.style.visibility = "hidden";
 
-	if( current_num == "` + fmt.Sprintf("%04d", maxpage-1) + `" ){
-		current_num = "0000"
-		current_num = zeroPadding( Number(current_num) + 1 ,4);
-	} else {
+	if( current_num != "` + fmt.Sprintf("%04d", maxpage-1) + `" ){
 		current_num = zeroPadding( Number(current_num) + 1 ,4);
 	}
 	current = "p" + current_num;
@@ -207,7 +213,18 @@ function next(){
 	//page.style.visibility = "visible";
 }
 window.addEventListener("click", function(e) {
-	console.log("offset:" + e.offsetX + "," + e.offsetY); 
+	var w = window.innerWidth;
+	const ratio = 0.3;
+	var left = w * ratio;
+	var right = w * ( 1 - ratio );
+	//console.log("offset:" + e.offsetX + "," + e.offsetY); 
+	if( e.offsetX < left ){
+		prev()
+		console.log("offsetX :" + e.offsetX); 
+	} else if( e.offsetX > right ){
+		next()
+		console.log("offsetX :" + e.offsetX); 
+	}
 });
 
 var mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
@@ -385,12 +402,6 @@ func dividePage(info *Info) { // {{{
 			os.Mkdir(tmpdir, 0777)
 			//fmt.Printf("%vを作成しました", tmpdir)
 		}
-		/*
-			tmpdir = filepath.Join(info.tmp_path, "body")
-			if _, err := os.Stat(tmpdir); os.IsNotExist(err) {
-				os.Mkdir(tmpdir, 0777)
-			}
-		*/
 		tmpdir = filepath.Join(info.tmp_path, "html")
 		if _, err := os.Stat(tmpdir); os.IsNotExist(err) {
 			os.Mkdir(tmpdir, 0777)
@@ -424,43 +435,25 @@ func outputOnePage(info *Info) { // {{{
 	// フッタ
 	info.line += fmt.Sprintf("<footer>%v</footer>", info.footer)
 
-	if info.absolute_page >= 0 || info.bool_print_page_num {
-		// ページ数
-	}
-
+	// ページ数
 	if info.absolute_page > 0 && info.bool_print_page_num {
 		// 最初のページではなく、ページ数を表示するように設定されていたら
 		info.line += fmt.Sprintf("<div class=\"page_num>%v\"</div>", info.page)
 	}
 
-	// ここまでを出力
-
-	tmpfilename := filepath.Join(info.tmp_path, "md", fmt.Sprintf("%04d.md", info.absolute_page))
-
+	// 表紙以外のページで引き継ぐかどうか処理する
 	/*
-		if info.debug {
-			fmt.Println(">> " + tmpfilename)
+		if info.absolute_page != 0 {
+			switch info.state_title {
+			case 2: // このページ内に ## があった h2 h3 両方とも引き継がない。
+			// 既に###はリセットされているので無視してよい
+			case 3: // このページ内に ### があった h2のみ引き継ぐ
+				info.h3 = "none"
+			default:
+				// 何もしない
+			}
 		}
 	*/
-
-	file, err := os.Create(tmpfilename)
-	defer file.Close()
-	if err != nil {
-		panic(err)
-	}
-
-	// 表紙以外のページで引き継ぐかどうか処理する
-	if info.absolute_page != 0 {
-		switch info.state_title {
-		case 2: // このページ内に ## があった h2 h3 両方とも引き継がない。
-			info.h2 = "none"
-			info.h3 = "none"
-		case 3: // このページ内に ### があった h2のみ引き継ぐ
-			info.h3 = "none"
-		default:
-			// 何もしない
-		}
-	}
 
 	// h2 と h3のみ前のページから引き継いで表記ことができる
 	title := ""
@@ -506,11 +499,18 @@ func outputOnePage(info *Info) { // {{{
 	// プリアンブルとタイトルをくっつける
 	output := info.preamble + title + info.output
 
-	err = ioutil.WriteFile(tmpfilename, []byte(output), 0666)
+	// ここまでを出力
+
+	tmpfilename := filepath.Join(info.tmp_path, "md", fmt.Sprintf("%04d.md", info.absolute_page))
+
+	file, err := os.Create(tmpfilename)
+	defer file.Close()
 	if err != nil {
 		panic(err)
 	}
-
+	if err = ioutil.WriteFile(tmpfilename, []byte(output), 0666); err != nil {
+		panic(err)
+	}
 } // }}}
 
 func initInfo(info *Info, fi *Fileinfo) { // {{{
