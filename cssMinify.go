@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 
 	//"fmt"
 	"io/ioutil"
@@ -13,9 +12,6 @@ import (
 )
 
 func Minify(inputFilePath string) string {
-	flag.Parse()
-	// 第一引数にマークダウンのファイルのパスを受け取る
-	// 引数を元に構造体を作る
 	fname, _ := filepath.Abs(inputFilePath)
 	//bname := inputFilePath[:len(inputFilePath)-len(filepath.Ext(inputFilePath))]
 	//dname := filepath.Dir(fname)
