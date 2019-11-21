@@ -176,8 +176,8 @@ table {
   padding: 0;
   border-spacing: 2px;
   border-collapse: collapse;
-  width: 80%;
-  margin: auto
+  max-width: 80%;
+  margin-left: 5%;
 }
 
 table, td, th {
@@ -206,7 +206,6 @@ table tr th {
 
 table tr td, table tr th {
   border: 1px solid #ccc;
-  text-align: center;
   margin: 0;
   padding: 6px 13px
 }
