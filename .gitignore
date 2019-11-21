@@ -6,7 +6,7 @@
 *.log
 *.txt
 
-test/.tmp
+src/test/.tmp
 build/*
 build_ori/*
 *.mini.css
