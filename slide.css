@@ -1,3 +1,7 @@
+html {
+  overflow: -moz-scrollbars-none;
+  overflow: hidden;
+}
 body {
   font-family: Helvetica, arial, sans-serif;
   font-size: 3.5vmin;
@@ -7,6 +11,10 @@ body {
   background-color: #fff;
   color: #444;
   word-wrap: break-word;
+}
+
+body::-webkit-scrollbar {
+  display: none
 }
 
 body>:first-child {
@@ -106,8 +114,12 @@ code {
   word-wrap: break-word;
 }
 
+ul {
+  padding: 0;
+}
+
 li, ul {
-  margin: 0.2em 0;
+  margin: .2vmin .2vmin 0 2vmin;
 }
 
 hr {
@@ -274,11 +286,16 @@ pre code, pre tt {
 }
 
 .sub {
+  display: flex;
+  flex-flow: column;
   position: absolute;
   padding: 5vh 10vw;
   width: 80vw;
   height: 90vh;
-  overflow-y:hidden;
+}
+
+.sub>p:last-of-type {
+  min-height: 0;
 }
 
 hr {

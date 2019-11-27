@@ -214,6 +214,8 @@ window.addEventListener("click", function(e) {
 	}
 });
 
+var bool_ctrl_key = false;
+
 var mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
 try{
 	document.addEventListener (mousewheelevent, onWheel, false);
@@ -225,30 +227,39 @@ function onWheel(e) {
 	if(!e) e = window.event; //for legacy IE
 	//e.preventDefault();
 	var delta = e.deltaY ? -(e.deltaY) : e.wheelDelta ? e.wheelDelta : -(e.detail);
-	if (delta < 0){
-		//下にスクロールした場合の処理
-		next();
-	} else if (delta > 0){
-		//上にスクロールした場合の処理
-		prev();
+	if( bool_ctrl_key === false ){
+		if (delta < 0){
+			//下にスクロールした場合の処理
+			next();
+		} else if (delta > 0){
+			//上にスクロールした場合の処理
+			prev();
+		}
 	}
 }
 
 function keydownfunc( event ) {
 	var key_code = event.keyCode;
-	if( key_code === 33 ) { prev(); } // PageUp
-	if( key_code === 34 ) { next(); } // PageDown
+	if( bool_ctrl_key === false ){
+		 if( key_code === 17 ) { bool_ctrl_key = true; } // ctrlキー
+	}
+	if( key_code === 33 ) { prev(); } // pageup
+	if( key_code === 34 ) { next(); } // pagedown
 	if( key_code === 37 ) { prev(); } // ←
 	if( key_code === 38 ) { prev(); } // ↑
 	if( key_code === 39 ) { next(); } // →
 	if( key_code === 40 ) { next(); } // ↓
-	checkSize(current)
+}
+function keyupfunc( event ) {
+	var key_code = event.keyCode;
+	if( key_code === 17 ) { bool_ctrl_key = false; } // ctrlキー
 }
 
 window.onload = init;
 
 var countInterval = 0;
 
+addEventListener("keyup" , keyupfunc);
 addEventListener("keydown", keydownfunc, false);
 //window.addEventListener('load', resize, false);
 //window.addEventListener('resize', resize, false);
