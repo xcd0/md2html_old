@@ -21,6 +21,10 @@ import ( // {{{
 	"github.com/xcd0/go-nkf"
 ) // }}}
 
+const defaultCss = ` /* build in css*/
+body{font-family:Helvetica,arial,sans-serif;font-size:14px;line-height:1.8;padding:30px;background-color:#fff;color:#333;counter-reset:sheet}body>:first-child{margin-top:0!important}body>:last-child{margin-bottom:0!important}a{color:#4183c4;text-decoration:none}a.absent{color:#c00}a.anchor{display:block;padding-left:30px;margin-left:-30px;cursor:pointer;position:absolute;top:0;left:0;bottom:0x}h1,h2,h3,h4,h5,h6{margin:5px 0;padding:0;font-weight:700;-webkit-font-smoothing:antialiased;cursor:text;position:relative}h1:first-child,h1:first-child+h2,h2:first-child,h3:first-child,h4:first-child,h5:first-child,h6:first-child{margin-top:0;padding-top:0}h1:hover a.anchor,h2:hover a.anchor,h3:hover a.anchor,h4:hover a.anchor,h5:hover a.anchor,h6:hover a.anchor{text-decoration:none}h1 code,h1 tt,h2 code,h2 tt,h3 code,h3 tt,h4 code,h4 tt,h5 code,h5 tt,h6 code,h6 tt{font-size:inherit}h1{font-size:150%;padding-bottom:0}h1,h2{color:#000}h2{font-size:130%;border-bottom:2px solid #ccc}h3{font-size:120%;border-bottom:1px solid #ddd}h4{font-size:80%}h5{font-size:70%}h6{font-size:60%;color:#777}blockquote,dl,li,ol,p,pre,table,ul{margin:0}hr{border:0 0 0;height:4px;padding:0}a:first-child h1,a:first-child h2,a:first-child h3,a:first-child h4,a:first-child h5,a:first-child h6,bo dy>h5:first-child,body>h1:first-child,body>h1:first-child+h2,body>h2:first-child,body>h3:first-child,body>h4:first-child,body>h6:first-child{margin-top:0;padding-top:0}h1 p,h2 p,h3 p,h4 p,h5 p,h6 p{margin-top:0}li p.first{display:inline-block}ol,ul{padding-left:30px}ol:first-child,ul:first-child{margin-top:0}dl,dl dt{padding:0}dl dt{font-size:14px;font-weight:700;font-weight:1400;font-style:italic;margin:15px 0 5px}dl dt:first-child{padding:0}dl dt>:first-child{margin-top:0}dl dt>:last-child{margin-bottom:0}dl dd{margin:0 0 15px;padding:0 15px}dl dd>:first-child{margin-top:0}dl dd>:last-child{margin-bottom:0}blockquote{border-left:4px solid #ddd;padding:0 15px;color:#777}blockquote>:first-child{margin-top:0}blockquote>:last-child{margin-bottom:0}table{padding:0;border-spacing:2px;border-collapse:collapse;max-width:100%;width:100%;margin:auto}table,td,th{border:1px solid #ccc}td,th{padding:0;margin:0}table tr{background-color:#fff;border-top:1px solid #c6cbd1;margin:0;padding:0}table tr:nth-child(2n){background-color:#f6f8fa}table tr th{font-weight:700}table tr td,table tr th{border:1px solid #ccc;margin:0;padding:2px 5px}table tr td:first-child,table tr th:first-child{margin-top:0}img{max-width:100%}code,tt{margin:0 2px;padding:0 5px;white-space:nowrap;border:1px solid #eaeaea;background-color:#f8f8f8;border-radius:3px}pre code{margin:0;padding:0;white-space:pre;border:0;background:0 0}.highlight pre,pre{border:1px solid #ccc;font-size:13px;line-height:19px;overflow:auto;padding:6px 10px;border-radius:3px}pre code,pre tt{background-color:transparent;border:0}.main-content{max-width:50pc;margin:auto;padding-bottom:50px}hr{border:0!important;color:#fff;height:4px}.page_num{border:0;position:absolute;right:10;bottom:10}.sheet{page-break-after:always;page-break-inside:avoid}.sheet::after{position:absolute;bottom:0;right:0;counter-increment:sheet}@page{margin:5mm;width:297mm;height:210mm}@media screen{body{background-color:#fefef0;width:297mm;height:210mm}.sheet{background:#fff;box-shadow:0 .5mm 2mm rgba(0,0,0,.3)}}
+`
+
 type Fileinfo struct { // {{{
 	Md       string
 	Apath    string     // 入力mdファイルの絶対パス
@@ -109,11 +113,7 @@ func CreateMinifiedCss(csspath string) string { // {{{
 		// fmt.Println("デフォルトのcssファイルを使用します。")
 		// fmt.Println(err)
 
-		css := `
-/* build in css*/
-body{font-family:Helvetica,arial,sans-serif;font-size:14px;line-height:1.8;padding:30px;background-color:#fff;color:#333}body>:first-child{margin-top:0!important}body>:last-child{margin-bottom:0!important}a{color:#4183c4;text-decoration:none}a.absent{color:#c00}a.anchor{display:block;padding-left:30px;margin-left:-30px;cursor:pointer;position:absolute;top:0;left:0;bottom:0x}h1,h2,h3,h4,h5,h6{margin:20px 0 10px;padding:0;font-weight:700;-webkit-font-smoothing:antialiased;cursor:text;position:relative}h1:first-child,h1:first-child+h2,h2:first-child,h3:first-child,h4:first-child,h5:first-child,h6:first-child{margin-top:0;padding-top:0}h1:hover a.anchor,h2:hover a.anchor,h3:hover a.anchor,h4:hover a.anchor,h5:hover a.anchor,h6:hover a.anchor{text-decoration:none}h1 code,h1 tt,h2 code,h2 tt,h3 code,h3 tt,h4 code,h4 tt,h5 code,h5 tt,h6 code,h6 tt{font-size:inherit}h1{font-size:34px;margin-bottom:40px;padding-bottom:0}h1,h2{color:#000}h2{font-size:30px;border-bottom:2px solid #ccc}h3{font-size:24px;border-bottom:1px solid #ddd}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px;color:#777}blockquote,dl,li,ol,p,pre,table,ul{margin:10px 0}hr{border:0 0 0;height:4px;padding:0}a:first-child h1,a:first-child h2,a:first-child h3,a:first-child h4,a:first-child h5,a:first-child h6,bo dy>h5:first-child,body>h1:first-child,body>h1:first-child+h2,body>h2:first-child,body>h3:first-child,body>h4:first-child,body>h6:first-child{margin-top:0;padding-top:0}h1 p,h2 p,h3 p,h4 p,h5 p,h6 p{margin-top:0}li p.first{display:inline-block}ol,ul{padding-left:30px}ol:first-child,ul:first-child{margin-top:0}dl,dl dt{padding:0}dl dt{font-size:14px;font-weight:700;font-weight:1400;font-style:italic;margin:15px 0 5px}dl dt:first-child{padding:0}dl dt>:first-child{margin-top:0}dl dt>:last-child{margin-bottom:0}dl dd{margin:0 0 15px;padding:0 15px}dl dd>:first-child{margin-top:0}dl dd>:last-child{margin-bottom:0}blockquote{border-left:4px solid #ddd;padding:0 15px;color:#777}blockquote>:first-child{margin-top:0}blockquote>:last-child{margin-bottom:0}table{padding:0;border-spacing:2px;border-collapse:collapse;width:80%;margin:auto}table,td,th{border:1px solid #ccc}td,th{padding:0;margin:0}table tr{background-color:#fff;border-top:1px solid #c6cbd1;margin:0;padding:0}table tr:nth-child(2n){background-color:#f6f8fa}table tr th{font-weight:700}table tr td,table tr th{border:1px solid #ccc;text-align:center;margin:0;padding:6px 13px}table tr td:first-child,table tr th:first-child{margin-top:0}img{max-width:100%}code,tt{margin:0 2px;padding:0 5px;white-space:nowrap;border:1px solid #eaeaea;background-color:#f8f8f8;border-radius:3px}pre code{margin:0;padding:0;white-space:pre;border:0;background:0 0}.highlight pre,pre{border:1px solid #ccc;font-size:13px;line-height:19px;overflow:auto;padding:6px 10px;border-radius:3px}pre code,pre tt{background-color:transparent;border:0}.main-content{max-width:50pc;margin:auto;padding-bottom:50px}hr{border:0!important;color:#fff;height:4px}.page_num{border:0;position:absolute;right:10;bottom:10}
-`
-		return css
+		return defaultCss
 	}
 
 	minifiedCss := Minify(csspath)
@@ -334,6 +334,7 @@ func ReplaceImg4mdPre(outputList []string, stringmd string) string { // {{{1
 	lines := strings.Split(stringmd, "\n")
 
 	for _, line := range lines { // 一行ずつ
+
 		if strings.Contains(line, "![") == false {
 			// ![が含まれていない
 			output += line + "\n"
@@ -563,6 +564,9 @@ func Makebody(mdpath string, rImgPath []string, t string) string { // {{{1
 	// 独自記法の置換
 	body = filter2body(body)
 
+	// h2でsectionに区切る
+	body = parseHtml(body)
+
 	return body
 
 	/*
@@ -589,6 +593,25 @@ func Makebody(mdpath string, rImgPath []string, t string) string { // {{{1
 func Makefooter() string { // {{{
 	footer := "</body>\n</html>"
 	return footer
+} // }}}
+
+func parseHtml(stringHtml string) string { // {{{
+	var regH2 = regexp.MustCompile(`<!-- sectin -->`)
+
+	lines := strings.Split(stringHtml, "\n")
+	output := ""
+	// H2毎にセクションで区切る
+	output += "<section class=\"sheet\">" + "\n"
+	for _, line := range lines { // 一行ずつ
+		if regH2.MatchString(line) {
+			// h2毎にセクションを区切る
+			output += "</section>" + "\n"
+			output += "<section class=\"sheet\">" + "\n"
+		}
+		output += line + "\n"
+	}
+	output += "</section>" + "\n"
+	return output
 } // }}}
 
 /*

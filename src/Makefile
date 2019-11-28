@@ -14,6 +14,7 @@ else
 	go build -o $(DST)/$(BIN)
 endif
 	cp -rf $(DST)/$(BIN) ..
+	cp -rf $(DST)/$(BIN) $(GOPATH)/bin
 
 run: build
 	cd .. && ./$(BIN) readme.md

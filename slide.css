@@ -78,13 +78,13 @@ h1, h2 {
 }
 
 h2 {
-  font-size: 6vh;
+  font-size: 200%;
   border-bottom: 2px solid #ccc;
   margin-bottom: 3%;
 }
 
 h3 {
-  font-size: 4vh;
+  font-size: 150%;
   margin-top: -1.9%;
   border-bottom: 1px solid #ddd;
   color: #555
