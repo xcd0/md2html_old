@@ -3,6 +3,14 @@
 
 # md2htmlについて
 
+## 特徴
+* Golang シングルバイナリ
+
+go get -u -v github.com/xcd0/md2html/src
+
+* スライドも作れる
+　　　　* 分けるかも
+
 <!---->
 
 ## 概要
