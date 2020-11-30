@@ -4,13 +4,11 @@ import ( // {{{
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"regexp"
 
 	//"log"
 	"os"
 	"path/filepath"
 	"sort"
-	"strings"
 	"sync"
 	//"text/template"
 ) // }}}
@@ -77,26 +75,6 @@ func makeHtml(fi *Fileinfo) { // {{{
 	}
 
 } // }}}
-
-func filter2body(in string) string { // {{{1
-
-	lines := strings.Split(in, "\n")
-
-	// 独自置換対象文字列
-	var rep [][]string
-	rep = append(rep, []string{`^===$`, "\n<div style='page-break-before:always'></div>\n"})
-
-	output := ""
-	for _, r := range rep { // 全ての置換対象文字列について回す
-		reg := regexp.MustCompile(r[0])
-		for _, line := range lines { // 一行ずつ
-			output += reg.ReplaceAllString(line, r[1]) + "\n"
-		}
-	}
-	// 上書きする
-	return output
-
-} // }}}1
 
 func sortStirngsLen(in []string) []string { // {{{
 

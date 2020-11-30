@@ -26,6 +26,8 @@ type Info struct { // {{{
 	//h1                  string // 廃止
 	h2          string
 	h3          string
+	h2_output   bool
+	h3_output   bool
 	footer      string
 	preamble    string
 	output      string
@@ -36,6 +38,11 @@ type Info struct { // {{{
 	state_title int // このページにh1~h3の表記があるか、あればその数値 なければ-1
 } // }}}
 
+/*!
+@brief スライド用のhtmlファイルと、スライド用のPDFを生成するための1ページごとのhtmlファイルを生成する
+@note 現状まだpdfは生成してないので無駄処理が含まれる
+@noteスライド用のhtmlファイルはjavascriptでhiddenとvisibleを切り替えて表示する
+*/
 func MakePdfForSlide(fi *Fileinfo) { // {{{
 	//fmt.Println("MakePdfForSlide")
 
@@ -48,6 +55,8 @@ func MakePdfForSlide(fi *Fileinfo) { // {{{
 
 	var bodies []string
 
+	// このfor文で作るhtmlはpdf用に使う予定(未実装)
+	// この中のbodiesはスライド用htmlで使いまわす
 	page_num := info.absolute_page // 0から始まり実際のページ数で終了している
 	for i := 0; i < page_num; i++ {
 		// 1ページづつ
@@ -75,7 +84,7 @@ func MakePdfForSlide(fi *Fileinfo) { // {{{
 	// 中間ディレクトリを削除
 	if f, err := os.Stat(info.tmp_path); os.IsNotExist(err) || f.IsDir() {
 		// 存在するので消す
-		if info.debug == false {
+		if false { // info.debug == false {
 			// デバッグ中でないとき
 			if err := os.RemoveAll(info.tmp_path); err != nil {
 				fmt.Println(err)
@@ -88,238 +97,6 @@ func MakePdfForSlide(fi *Fileinfo) { // {{{
 	// すべてのスライドを含むhtmlを生成
 	genSlideHtml(bodies, filepath.Join(fi.Dpath, fi.Basename+"_slide.html"))
 
-} // }}}
-
-func returnPreBody(maxpage int, css, postHead string) string { // {{{
-	return `<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<script type="text/javascript" async
-	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async>
-	</script>
-	<script type="text/x-mathjax-config">
-	MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$']]}});
-	</script>
-	<style type="text/css">
-	<!--
-	` + css + `
-	-->
-	</style>
-	<script type="text/javascript">
-<!--
-function goto(prev, next) {
-	document.getElementById(prev).style.visibility = "hidden";
-	document.getElementById(next).style.visibility = "visible";
-}
-
-var current_num;
-var current;
-function zeroPadding(num,length){
-	return ('0000000000' + num).slice(-length);
-}
-
-function setPage(p,n){
-	goto(p,n)
-	location.hash = current_num;
-}
-
-function init(){
-	var urlHash = location.hash.slice(1);
-	if( urlHash == false ){
-		current_num = zeroPadding(0,4);
-	} else {
-		if( isNaN(urlHash) ){
-			current_num = "0000"
-			location.hash = current_num;
-		} else {
-			current_num = zeroPadding(urlHash,4);
-			var n = Number(current_num);
-			if( n < 0 || n > ` + fmt.Sprintf("%d", maxpage-1) + ` ){
-				current_num = "0000"
-				location.hash = current_num;
-			}else{
-			}
-		}
-	}
-	current = "p" + String(current_num);
-	main = document.getElementById("container");
-	setPage( current, current )
-}
-
-function prev(){
-	p = current
-	if( current_num != "0000" ){
-		current_num = zeroPadding( Number(current_num) - 1 ,4);
-	}
-	current = "p" + current_num;
-	setPage( p, current )
-}
-function next(){
-	p = current
-	if( current_num != "` + fmt.Sprintf("%04d", maxpage-1) + `" ){
-		current_num = zeroPadding( Number(current_num) + 1 ,4);
-	}
-	current = "p" + current_num;
-	setPage( p, current )
-}
-
-function resizeFontSize(p,r) {
-	//p.style.fontSize = x + '%';
-	p.style.zoom = r;
-	p.style.MozTransform = r;
-	p.style.WebkitTransform = r;
-}
-
-function checkSize(c){
-	var r = document.getElementById(c).getBoundingClientRect();
-	console.log(
-		"cH : " + c.clientHeight
-		+ "cRH : " + r.Height
-		+ ", clientH : " + document.documentElement.clientHeight
-	);
-}
-
-function shurinkPage(c){
-	//checkSize(c);
-	if( c.clientHeight > document.documentElement.clientHeight ){
-		i= 0.95;
-		resizeFontSize(c, i)
-		for(
-			;
-			i > 0.7
-			&& c.clientHeight > document.documentElement.clientHeight;
-			i -= 0.01
-		) {
-			resizeFontSize(c, i);
-			//checkSize(c);
-		}
-	}
-}
-
-window.addEventListener("click", function(e) {
-	var w = window.innerWidth;
-	const ratio = 0.1;
-	var left = w * ratio;
-	var right = w * ( 1 - ratio );
-	//console.log("offset:" + e.offsetX + "," + e.offsetY);
-	if( e.offsetX < left ){
-		prev()
-		console.log("offsetX :" + e.offsetX);
-	} else if( e.offsetX > right ){
-		next()
-		console.log("offsetX :" + e.offsetX);
-	}
-});
-
-var bool_ctrl_key = false;
-
-var mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
-try{
-	document.addEventListener (mousewheelevent, onWheel, false);
-}catch(e){
-	//for legacy IE
-	document.attachEvent ("onmousewheel", onWheel);
-}
-function onWheel(e) {
-	if(!e) e = window.event; //for legacy IE
-	//e.preventDefault();
-	var delta = e.deltaY ? -(e.deltaY) : e.wheelDelta ? e.wheelDelta : -(e.detail);
-	if( bool_ctrl_key === false ){
-		if (delta < 0){
-			//下にスクロールした場合の処理
-			next();
-		} else if (delta > 0){
-			//上にスクロールした場合の処理
-			prev();
-		}
-	}
-}
-
-function keydownfunc( event ) {
-	var key_code = event.keyCode;
-	if( bool_ctrl_key === false ){
-		 if( key_code === 17 ) { bool_ctrl_key = true; } // ctrlキー
-	}
-	if( key_code === 33 ) { prev(); } // pageup
-	if( key_code === 34 ) { next(); } // pagedown
-	if( key_code === 37 ) { prev(); } // ←
-	if( key_code === 38 ) { prev(); } // ↑
-	if( key_code === 39 ) { next(); } // →
-	if( key_code === 40 ) { next(); } // ↓
-}
-function keyupfunc( event ) {
-	var key_code = event.keyCode;
-	if( key_code === 17 ) { bool_ctrl_key = false; } // ctrlキー
-}
-
-window.onload = init;
-
-var countInterval = 0;
-
-addEventListener("keyup" , keyupfunc);
-addEventListener("keydown", keydownfunc, false);
-//window.addEventListener('load', resize, false);
-//window.addEventListener('resize', resize, false);
-
-` +
-		//postHead +
-		`
-//-->
-</script>
-</head>
-<body>
-`
-} // }}}
-
-func genSlideHtml(bodies []string, slidePath string) { // {{{
-
-	cssPath := filepath.Join(filepath.Dir(slidePath), "slide.css")
-
-	slideCss := Minify(cssPath)
-	if slideCss == "default" {
-		slideCss = `/* builtin css*/
-body{font-family:Helvetica,arial,sans-serif;font-size:3.5vmin;padding:0;margin:0;line-height:1.6;background-color:#fff;color:#444;word-wrap:break-word}body>:first-child{margin-top:0!important}body>:last-child{margin-bottom:0!important}a{color:#4183c4;text-decoration:none}a.absent{color:#c00}a.anchor{display:block;padding-left:30px;margin-left:-30px;cursor:pointer;position:absolute;top:0;left:0;bottom:0x}h1,h2,h3,h4,h5,h6{margin:20px 0 10px;padding:0;font-weight:700;-webkit-font-smoothing:antialiased;cursor:text;position:relative}h1:first-child,h1:first-child+h2,h2:first-child,h3:first-child,h4:first-child,h5:first-child,h6:first-child{margin-top:0;padding-top:0}h1:hover a.anchor,h2:hover a.anchor,h3:hover a.anchor,h4:hover a.anchor,h5:hover a.anchor,h6:hover a.anchor{text-decoration:none}h1 code,h1 tt,h2 code,h2 tt,h3 code,h3 tt,h4 code,h4 tt,h5 code,h5 tt,h6 code,h6 tt{font-size:inherit}h1{font-size:250%;margin-bottom:40px;padding-bottom:0}h1,h2{color:#000}h2{font-size:6vh;border-bottom:2px solid #ccc;margin-bottom:3%}h3{font-size:4vh;margin-top:-1.9%;border-bottom:1px solid #ddd;color:#555}h4{font-size:80%}h5{font-size:60%}h6{font-size:40%;color:#777}blockquote,dl,li,ol,p,pre,table{margin:2% 0}pre{white-space:pre-wrap}code{white-space:pre-wrap;word-wrap:break-word}li,ul{margin:.2em 0}hr{border:0 0 0;height:4px;padding:0}a:first-child h1,a:first-child h2,a:first-child h3,a:first-child h4,a:first-child h5,a:first-child h6,bo dy>h5:first-child,body>h1:first-child,body>h1:first-child+h2,body>h2:first-child,body>h3:first-child,body>h4:first-child,body>h6:first-child{margin-top:0;padding-top:0}h1 p,h2 p,h3 p,h4 p,h5 p,h6 p{margin-top:0}li p.first{display:inline-block}ol,ul{padding-left:30px}ol:first-child,ul:first-child{margin-top:0}dl,dl dt{padding:0}dl dt{font-size:14px;font-weight:700;font-weight:1400;font-style:italic;margin:15px 0 5px}dl dt:first-child{padding:0}dl dt>:first-child{margin-top:0}dl dt>:last-child{margin-bottom:0}dl dd{margin:0 0 15px;padding:0 15px}dl dd>:first-child{margin-top:0}dl dd>:last-child{margin-bottom:0}blockquote{border-left:4px solid #ddd;padding:0 15px;color:#777}blockquote>:first-child{margin-top:0}blockquote>:last-child{margin-bottom:0}table{padding:0;border-spacing:2px;border-collapse:collapse;max-width:90%;margin:auto}table,td,th{border:1px solid #ccc;font-size:90%}td,th{padding:0;margin:0}table tr{background-color:#fff;border-top:1px solid #c6cbd1;margin:0;padding:0}table tr:nth-child(2n){background-color:#f6f8fa}table tr th{font-weight:700;white-space:nowrap}table tr td,table tr th{border:1px solid #ccc;text-align:center;margin:0;padding:6px 13px}table tr td:first-child,table tr th:first-child{margin-top:0}img{max-height:100%;max-width:100%}code,tt{margin:1%;padding:.2% 1%;white-space:nowrap;border:1px solid #eaeaea;background-color:#f8f8f8;border-radius:3px}pre code{margin:0;padding:0;white-space:pre;border:0;background:0 0}.highlight pre,pre{border:1px solid #ccc;font-size:13px;line-height:19px;overflow:auto;padding:6px 10px;border-radius:3px}pre code,pre tt{background-color:transparent;border:0}.main-content{position:relative}.sub{position:absolute;padding:5vh 10vw;width:80vw;height:90vh;overflow-y:hidden}hr{border:0!important;color:#fff;height:4px}.page_num{border:0;position:absolute;right:10;bottom:10}.controller{width:50px;position:absolute;right:0;bottom:0}
-`
-	}
-
-	jsDocArray := ""
-	jsDocArray += "\n"
-	//for i, p := range bodies {
-	//	// hereに一旦入れる
-	//	jsDocArray += fmt.Sprintf("\nvar here = function() {\n/*<!--start-->%v\n<!--fin-->\n*/};\n", p)
-	//	//jsDocArray += fmt.Sprintf("\nvar here = function() {\n/*<!--start-->%v\n<!--fin-->\n*/};\n", p)
-	//	// 不要部分を切り取ってグローバル変数に代入
-	//	jsDocArray += fmt.Sprintf("const p%04v", i) + ` = here.toString().match(/\/\*([\s\S]*)\*\//).pop();` //.toString().match(/\/\*([\s\S])*\*\//).pop();`
-	//	//jsDocArray += fmt.Sprintf("const p%04v", i) + ` = here.toString().match(/\/\*([\s\S]*)\*\//).pop();` //.toString().match(/\/\*([\s\S])*\*\//).pop();`
-	//}
-	jsDocArray += "\n"
-	jsDocArray += "console.log(p0000);\n"
-
-	output := returnPreBody(len(bodies), slideCss, jsDocArray)
-
-	// bodyのみのsliceから1つにまとめたhtmlを生成する。
-	output += "<div id=\"container\" class=\"main-content\">"
-
-	for i, p := range bodies {
-		output += fmt.Sprintf("<div id=\"p%04d\" id=\"container\" class=\"sub\" style=\"visibility: hidden;\">\n", i)
-		output += fmt.Sprintf("%v\n", p)
-		output += fmt.Sprintf("</div>\n")
-	}
-	output += "</div>" // main-content
-
-	output += "</body>\n</html>\n"
-
-	output = delEmptyLine(output)
-
-	// スライド用htmlの1ページを出力する
-	if err := ioutil.WriteFile(slidePath, []byte(output), 0644); err != nil {
-		fmt.Fprintf(os.Stderr, "File %s could not open : %v\n", slidePath, err)
-		fmt.Println(err)
-		panic(err)
-	}
 } // }}}
 
 func readPreamble(info *Info) { // {{{1
@@ -354,38 +131,46 @@ func readPreamble(info *Info) { // {{{1
 
 	// どのページでも指定できる項目
 	// ページ内に表記するページ数
-	tmp := strings.Index(info.line, "<!-- $page_number:\"")
-	if tmp >= 0 {
+	if tmp := strings.Index(info.line, "<!-- $page_number:\""); tmp >= 0 {
 		info.page, _ = strconv.Atoi(info.line[tmp+len("<!-- $page_number:\"") : strings.Index(info.line, "\" -->")])
 		return
 	}
 	// ページ内にページ数を表記する
-	tmp = strings.Index(info.line, "<!-- $set_page_number:\"true\" -->")
-	if tmp >= 0 {
+	if tmp := strings.Index(info.line, "<!-- $set_page_number:\"true\" -->"); tmp >= 0 {
 		info.bool_print_page_num = true
 		return
 	}
 	// ページ内にページ数を表記しない
-	tmp = strings.Index(info.line, "<!-- $set_page_number:\"false\" -->")
-	if tmp >= 0 {
+	if tmp := strings.Index(info.line, "<!-- $set_page_number:\"false\" -->"); tmp >= 0 {
 		info.bool_print_page_num = false
 		return
 	}
 	// フッターを設定
-	tmp = strings.Index(info.line, "<!-- $footer:\"")
-	if tmp >= 0 {
+	if tmp := strings.Index(info.line, "<!-- $footer:\""); tmp >= 0 {
 		return
 	}
 	// 各ページにタイトルを表示する
-	tmp = strings.Index(info.line, "<!-- $title:\"true\" -->")
-	if tmp >= 0 {
+	if tmp := strings.Index(info.line, "<!-- $title:\"true\" -->"); tmp >= 0 {
 		info.bool_print_title = true
 		return
 	}
 	// 各ページにタイトルを表示しない
-	tmp = strings.Index(info.line, "<!-- $title:\"false\" -->")
-	if tmp >= 0 {
+	if tmp := strings.Index(info.line, "<!-- $title:\"false\" -->"); tmp >= 0 {
 		info.bool_print_title = false
+		return
+	}
+	// ページに表示するh2要素を書き換える h2を表示してないときは表示する
+	if tmp := strings.Index(info.line, "<!-- $h2:\""); tmp >= 0 {
+		info.state_title = 2
+		info.h2 = info.line[tmp : len(info.line)-4] // " -->
+		info.h2_output = true
+		return
+	}
+	// ページに表示するh3要素を書き換える h3を表示してないときは表示する
+	if tmp := strings.Index(info.line, "<!-- $h3:\""); tmp >= 0 {
+		info.state_title = 3
+		info.h3 = info.line[tmp : len(info.line)-4] // " -->
+		info.h3_output = true
 		return
 	}
 } // }}}1
@@ -446,22 +231,26 @@ func dividePage(info *Info) { // {{{
 
 func outputOnePage(info *Info) { // {{{
 
-	// フッタ
-	info.line += fmt.Sprintf("<footer>%v</footer>", info.footer)
-
-	// ページ数
-	if info.absolute_page > 0 && info.bool_print_page_num {
-		// 最初のページではなく、ページ数を表示するように設定されていたら
-		info.line += fmt.Sprintf("<div class=\"page_num>%v\"</div>", info.page)
-	}
-
+	// 現在の設定を確認用に出力する 特に使わない
+	info.preamble += "<!-- 自動生成されたプリアンブル ここから -->\n"
+	info.preamble += fmt.Sprintf("<!-- // $width:\"%v\" -->\n", info.width)
+	info.preamble += fmt.Sprintf("<!-- // $height:\"%v\" -->\n", info.height)
+	info.preamble += fmt.Sprintf("<!-- // $page_number:\"%v\" -->\n", info.bool_print_page_num)
+	info.preamble += fmt.Sprintf("<!-- // $page:\"%v\" -->\n", info.page)
+	info.preamble += fmt.Sprintf("<!-- // $absolute_page:\"%v\" -->\n", info.absolute_page)
+	//info.preamble += fmt.Sprintf("<!-- // $h1:\"%v\" -->\n", info.h1)
+	info.preamble += fmt.Sprintf("<!-- // $h2:\"%v\" -->\n", info.h2)
+	info.preamble += fmt.Sprintf("<!-- // $h3:\"%v\" -->\n", info.h3)
+	info.preamble += fmt.Sprintf("<!-- // $title:\"%v\" -->\n", info.bool_print_title)
+	info.preamble += fmt.Sprintf("<!-- // $state_title:\"%v\" -->\n", info.state_title)
+	info.preamble += "<!-- 自動生成されたプリアンブル ここまで -->\n"
 	// 表紙以外のページで引き継ぐかどうか処理する
 	/*
 		if info.absolute_page != 0 {
 			switch info.state_title {
-			case 2: // このページ内に ## があった h2 h3 両方とも引き継がない。
-			// 既に###はリセットされているので無視してよい
-			case 3: // このページ内に ### があった h2のみ引き継ぐ
+				case 2: // このページ内に ## があった h2 h3 両方とも引き継がない。
+				// 既に###はリセットされているので無視してよい
+				case 3: // このページ内に ### があった h2のみ引き継ぐ
 				info.h3 = "none"
 			default:
 				// 何もしない
@@ -484,7 +273,7 @@ func outputOnePage(info *Info) { // {{{
 					title += "### " + info.h3 + "\n"
 				}
 			case 2: // このページ内に ## があった h2 h3 ともに引き継がない。
-				// 何もしない
+			// 何もしない
 			case 3: // このページ内に ### があった h3は 引き継がない。h2を引き継ぐ
 				if info.h2 != "none" {
 					title += "## " + info.h2 + "\n"
@@ -496,27 +285,32 @@ func outputOnePage(info *Info) { // {{{
 		title += "<!-- 前のページから引き継いだタイトル ここまで -->\n"
 	}
 
-	// 現在の設定を確認用に出力する 特に使わない
-	info.preamble += "<!-- 自動生成されたプリアンブル ここから -->\n"
-	info.preamble += fmt.Sprintf("<!-- // $width:\"%v\" -->\n", info.width)
-	info.preamble += fmt.Sprintf("<!-- // $height:\"%v\" -->\n", info.height)
-	info.preamble += fmt.Sprintf("<!-- // $page_number:\"%v\" -->\n", info.bool_print_page_num)
-	info.preamble += fmt.Sprintf("<!-- // $page:\"%v\" -->\n", info.page)
-	info.preamble += fmt.Sprintf("<!-- // $absolute_page:\"%v\" -->\n", info.absolute_page)
-	//info.preamble += fmt.Sprintf("<!-- // $h1:\"%v\" -->\n", info.h1)
-	info.preamble += fmt.Sprintf("<!-- // $h2:\"%v\" -->\n", info.h2)
-	info.preamble += fmt.Sprintf("<!-- // $h3:\"%v\" -->\n", info.h3)
-	info.preamble += fmt.Sprintf("<!-- // $title:\"%v\" -->\n", info.bool_print_title)
-	info.preamble += fmt.Sprintf("<!-- // $state_title:\"%v\" -->\n", info.state_title)
-	info.preamble += "<!-- 自動生成されたプリアンブル ここまで -->\n"
+	if info.h2_output || info.h2_output {
+		title += "<!-- マークダウン内で指定のタイトル ここから -->\n"
+		if info.h2_output {
+			info.h2_output = false
+			title += "## " + info.h2 + "\n"
+		}
+		if info.h3_output {
+			info.h3_output = false
+			title += "## " + info.h3 + "\n"
+		}
+		title += "<!-- マークダウン内で指定のタイトル ここまで -->\n"
+	}
+
+	// javascriptでいじる
+	//// ページ数
+	////if info.absolute_page > 0 && info.bool_print_page_num {
+	//if info.bool_print_page_num {
+	//	// 最初のページではなく、ページ数を表示するように設定されていたら
+	//	info.line += fmt.Sprintf("<div class=\"page_num\">%v</div>", info.page+1) // この時点のinfo.pageは前のページ数になっているので今のページ数にするために+1する
+	//}
 
 	// プリアンブルとタイトルをくっつける
 	output := info.preamble + title + info.output
 
 	// ここまでを出力
-
 	tmpfilename := filepath.Join(info.tmp_path, "md", fmt.Sprintf("%04d.md", info.absolute_page))
-
 	file, err := os.Create(tmpfilename)
 	defer file.Close()
 	if err != nil {
@@ -538,6 +332,8 @@ func initInfo(info *Info, fi *Fileinfo) { // {{{
 	//h1=                  "none" // 廃止
 	info.h2 = "none"
 	info.h3 = "none"
+	info.h2_output = false
+	info.h3_output = false
 	info.footer = ""
 	info.preamble = ""
 	info.output = ""
@@ -578,59 +374,45 @@ func parseMd(info *Info, fi *Fileinfo) { // {{{
 			readPreamble(info)
 		} else if regPageBreak.MatchString(info.line) {
 			/*
-				// 改ページを複数用意していたが削除した
-					} else if regPageBreak1.MatchString(info.line) ||
-						regPageBreak2.MatchString(info.line) ||
-						regPageBreak3.MatchString(info.line) {
+					// 改ページを複数用意していたが削除した
+				} else if regPageBreak1.MatchString(info.line) ||
+				regPageBreak2.MatchString(info.line) ||
+				regPageBreak3.MatchString(info.line) {
 			*/
 			// mdを===で分割する
 			// === は出力されない
 			dividePage(info)
-		} else {
-			// h2,h3を設定
-			if regH2.MatchString(info.line) {
-				// 上書き
-				info.h2 = info.line[3:]
-				info.state_title = 2
-				// h3はリセット
-				info.h3 = "none"
-			}
-			if regH3.MatchString(info.line) {
-				// 上書き
-				info.h3 = info.line[4:]
-				if info.state_title != 2 {
-					info.state_title = 3
-				}
-			}
-			if regCode.MatchString(info.line) {
-				// 論理反転
-				info.state_code = !info.state_code
-			}
+		}
 
-			if info.state_code == true {
-				// そのまま出力する ただし行末に半角空白を付与する
-				info.output += info.line + "  \n"
-			} else {
-				// ```で囲まれている場合は空白を入れない
-				info.output += info.line + "\n"
+		// h2,h3を設定 h2があったらstate_titleを2にしてh3のstringをリセットする
+		if regH2.MatchString(info.line) {
+			// 上書き
+			info.h2 = info.line[3:]
+			info.state_title = 2
+			// h3はリセット
+			info.h3 = "none"
+		}
+		if regH3.MatchString(info.line) {
+			// 上書き
+			info.h3 = info.line[4:]
+			if info.state_title != 2 {
+				info.state_title = 3
 			}
+		}
+		if regCode.MatchString(info.line) {
+			// 論理反転
+			info.state_code = !info.state_code
+		}
+
+		if info.state_code == true {
+			// そのまま出力する ただし行末に半角空白を付与する
+			info.output += info.line + "  \n"
+		} else {
+			// ```で囲まれている場合は空白を入れない
+			info.output += info.line + "\n"
 		}
 	}
 	// 最後の1ページを出力する
 	dividePage(info)
 
-} // }}}
-
-func delEmptyLine(in string) string { // {{{
-
-	output := ""
-
-	r := regexp.MustCompile(`^$`)
-	lines := strings.Split(in, "\n")
-	for _, line := range lines {
-		if r.MatchString(line) == false {
-			output += line + "\n"
-		}
-	}
-	return output
 } // }}}
