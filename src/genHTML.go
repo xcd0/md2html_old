@@ -15,7 +15,6 @@ import ( // {{{
 
 	//"github.com/google/go-github/github"
 	//"github.com/russross/blackfriday"
-	"gopkg.in/russross/blackfriday.v2"
 
 	gfm "github.com/shurcooL/github_flavored_markdown"
 	"github.com/xcd0/go-nkf"
@@ -72,6 +71,19 @@ func Makeheader(fi Fileinfo, csspath string) string { // {{{
 
 	header_css := CreateMinifiedCss(csspath)
 
+	// katex新しいの行内で動かなかった
+	/*
+		<!-- オンラインの時用 -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+		<!-- オフラインの時用 katexフォルダがある前提 -->
+		<link rel="stylesheet" href="katex/katex.min.css">
+		<script src="katex/katex.min.js"></script>
+		<script src="katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+	*/
+
 	header1 := `<!DOCTYPE html>
 <html>
 <head>
@@ -80,20 +92,11 @@ func Makeheader(fi Fileinfo, csspath string) string { // {{{
 `
 	header2 := `
 --></style>
-<script type="text/x-mathjax-config">
-	MathJax.Hub.Config({
-		tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], processEscapes: true },
-		CommonHTML: { matchFontHeight: false }
-	});
-</script>
-
-<!-- オンラインの時 -->
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
-<!-- オフラインの時 -->
-<script id="MathJax-script" async src="MathJax-3.0.0/es5/tex-mml-chtml.js"></script>
-
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js"></script>
 </head>
 <body>
 `
@@ -517,79 +520,6 @@ func ReplaceImg4mdPre(outputList []string, stringmd string) string { // {{{1
 	return output
 
 } // }}}1
-
-func Makebody(mdpath string, rImgPath []string, t string) string { // {{{1
-
-	stringmd := ReadMd(mdpath)
-
-	stringmd = ReplaceImg4mdPre(rImgPath, stringmd)
-
-	// 生成に使うライブラリに合わせて生成する
-	//body := string(bluemonday.UGCPolicy().SanitizeBytes(blackfriday.MarkdownBasic([]byte(stringmd))))
-	//body := string(blackfriday.MarkdownBasic([]byte(stringmd)))
-	//body := string(bluemonday.UGCPolicy().SanitizeBytes(blackfriday.Run([]byte(stringmd))))
-
-	//bytebody, _ := shurcooL_GFM([]byte(stringmd))
-	//bytebody := string(blackfriday.MarkdownBasic([]byte(stringmd)))
-
-	commonHtmlFlags := 0 |
-		blackfriday.UseXHTML |
-		blackfriday.Smartypants |
-		blackfriday.SmartypantsFractions |
-		blackfriday.SmartypantsDashes |
-		blackfriday.SmartypantsLatexDashes
-
-	extensions := 0 |
-		blackfriday.NoIntraEmphasis |
-		blackfriday.Tables |
-		blackfriday.FencedCode |
-		blackfriday.Autolink |
-		blackfriday.Strikethrough |
-		blackfriday.AutoHeadingIDs |
-		blackfriday.HeadingIDs |
-		blackfriday.BackslashLineBreak |
-		blackfriday.DefinitionLists
-
-	renderer := blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
-		Flags: commonHtmlFlags,
-	})
-	opt := []blackfriday.Option{
-		blackfriday.WithRenderer(renderer),
-		blackfriday.WithExtensions(extensions),
-	}
-	bytebody := string(blackfriday.Run([]byte(stringmd), opt...))
-	body := string(bytebody)
-
-	// 独自記法の置換
-	body = filter2body(body)
-
-	return body
-
-	/*
-		readMd(fi)
-		bytemd := []byte(fi.Md)
-
-		// 生成に使うライブラリに合わせて生成する
-		var bytebody []byte
-		if fi.Flavor == "github" {
-			bytebody, _ = gitHubAPI(bytemd)
-		} else if fi.Flavor == "gfm" {
-			bytebody, _ = shurcooL_GFM(bytemd)
-		} else {
-			bytebody = blackfriday.MarkdownBasic(bytemd)
-		}
-
-		body := string(bytebody)
-
-		return body
-	*/
-
-} //}}}1
-
-func Makefooter() string { // {{{
-	footer := "</body>\n</html>"
-	return footer
-} // }}}
 
 /*
 func gitHubAPI(md []byte) ([]byte, error) { // {{{
