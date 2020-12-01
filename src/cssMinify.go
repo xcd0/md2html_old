@@ -9,7 +9,24 @@ import (
 
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/css"
+	"github.com/tdewolff/minify/js"
 )
+
+func MinifyJavascriptString(inputJs string) string {
+	mediatype := "application/javascript"
+	m := minify.New()
+	m.AddFunc(mediatype, js.Minify)
+	minified, _ := m.String(mediatype, inputJs)
+	return minified
+}
+
+func MinifyCssString(inputCss string) string {
+	mediatype := "text/css"
+	m := minify.New()
+	m.AddFunc(mediatype, css.Minify)
+	minifiedCss, _ := m.String(mediatype, inputCss)
+	return minifiedCss
+}
 
 func Minify(inputFilePath string) string {
 	fname, _ := filepath.Abs(inputFilePath)
@@ -38,11 +55,5 @@ func Minify(inputFilePath string) string {
 
 	inputCss := string(bytes)
 
-	mediatype := "text/css"
-	m := minify.New()
-	m.AddFunc(mediatype, css.Minify)
-	minifiedCss, _ := m.String(mediatype, inputCss)
-
-	//log.Println(minifiedCss)
-	return minifiedCss
+	return MinifyCssString(inputCss)
 }

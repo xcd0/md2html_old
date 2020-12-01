@@ -84,7 +84,7 @@ func MakePdfForSlide(fi *Fileinfo) { // {{{
 	// 中間ディレクトリを削除
 	if f, err := os.Stat(info.tmp_path); os.IsNotExist(err) || f.IsDir() {
 		// 存在するので消す
-		if false { // info.debug == false {
+		if info.debug == false {
 			// デバッグ中でないとき
 			if err := os.RemoveAll(info.tmp_path); err != nil {
 				fmt.Println(err)
