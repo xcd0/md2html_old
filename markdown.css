@@ -176,8 +176,8 @@ table {
   padding: 0;
   border-spacing: 2px;
   border-collapse: collapse;
-  max-width: 80%;
-  margin-left: 5%;
+  width: 80%;
+  margin: auto
 }
 
 table, td, th {
@@ -206,6 +206,7 @@ table tr th {
 
 table tr td, table tr th {
   border: 1px solid #ccc;
+  text-align: center;
   margin: 0;
   padding: 6px 13px
 }
@@ -217,7 +218,6 @@ table tr td:first-child, table tr th:first-child {
 img {
   max-width: 100%
 }
-
 
 code, tt {
   margin: 0 2px;
@@ -266,5 +266,5 @@ hr {
   border: 0;
   position: absolute;
   right: 10;
-  bottom: 10;
+  bottom: 10
 }
