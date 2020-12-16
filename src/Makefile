@@ -23,6 +23,7 @@ run: build
 all: release-build
 
 release-build:
+	go generate
 	GOARCH=$(GOARCH) GOOS=windows go build -o $(DST)/$(BIN)_windows.exe $(FLAGS_WIN)
 	GOARCH=$(GOARCH) GOOS=darwin go build -o $(DST)/$(BIN)_macOS $(FLAGS)
 	GOARCH=$(GOARCH) GOOS=linux go build -o $(DST)/$(BIN)_linux $(FLAGS)
@@ -49,8 +50,6 @@ release: release-build
 	rm $(DST)/$(BIN)_macOS && \
 	rm $(DST)/$(BIN)_linux
 
-
-
 clean:
 	rm -rf build
 	rm -f *.html
@@ -63,3 +62,4 @@ get:
 	go get -u -v github.com/tdewolff/minify
 	go get -u -v github.com/tdewolff/minify/css
 	go get -u -v github.com/xcd0/go-nkf
+	go get -u -v github.com/josephspurrier/goversioninfo/cmd/goversioninfo
