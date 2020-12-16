@@ -14,6 +14,8 @@ import ( // {{{
 	//"text/template"
 ) // }}}
 
+const version = "5.3.1"
+
 func main() {
 	flag.Parse()
 	// 第一引数にマークダウンのファイルのパスを受け取る
@@ -21,10 +23,15 @@ func main() {
 	mdpath := ""
 	switch flag.NArg() {
 	case 0:
+		fmt.Printf("md2html version %v", version)
 		fmt.Printf("引数を指定してください。\n")
 		mdpath = "readme.md"
 	case 1:
-		mdpath = flag.Arg(0)
+		if flag.Arg(0) == "version" {
+			fmt.Printf("md2html version : %v", version)
+		} else {
+			mdpath = flag.Arg(0)
+		}
 	default:
 		fmt.Printf("引数を指定してください。\n")
 	}

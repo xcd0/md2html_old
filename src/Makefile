@@ -1,13 +1,18 @@
 
+VERSION:=$(gobump show | gojq -r .version)
+
 BIN=md2html
 DST=../build
 GOARCH=amd64
-FLAGS_WIN=-ldflags='-H windowsgui -w -s -extldflags "-static"' -a -tags netgo -installsuffix netgo
-FLAGS=-ldflags='-w -s -extldflags "-static"' -a -tags netgo -installsuffix netgo
+
+FLAGS_WIN=-ldflags="-X main.version=$(VERSION) -X main.revision=$(git rev-parse --short HEAD) -H windowsgui -w -s -extldflags '-static'"
+FLAGS_UNIX=-ldflags="-X main.version=$(VERSION) -X main.revision=$(git rev-parse --short HEAD) -w -s -extldflags '-static'"
+FLAGS=-a -tags netgo -installsuffix netgo
 
 #.PHONY: build
 .PHONY: all
 build:
+	bash update_version_info.sh
 	mkdir -p $(DST)
 ifeq ($(shell uname -o),Msys)
 	go build -o $(DST)/$(BIN).exe
@@ -23,10 +28,11 @@ run: build
 all: release-build
 
 release-build:
+	bash update_version_info.sh
 	go generate
-	GOARCH=$(GOARCH) GOOS=windows go build -o $(DST)/$(BIN)_windows.exe $(FLAGS_WIN)
-	GOARCH=$(GOARCH) GOOS=darwin go build -o $(DST)/$(BIN)_macOS $(FLAGS)
-	GOARCH=$(GOARCH) GOOS=linux go build -o $(DST)/$(BIN)_linux $(FLAGS)
+	GOARCH=$(GOARCH) GOOS=windows CGO_ENABLED=0 go build -o $(DST)/$(BIN)_windows.exe $(FLAGS_WIN) $(FLAGS)
+	GOARCH=$(GOARCH) GOOS=darwin CGO_ENABLED=0 go build -o $(DST)/$(BIN)_macOS $(FLAGS_UNIX) $(FLAGS)
+	GOARCH=$(GOARCH) GOOS=linux CGO_ENABLED=0 go build -o $(DST)/$(BIN)_linux $(FLAGS_UNIX) $(FLAGS)
 
 release: release-build
 	# for windows
@@ -62,4 +68,5 @@ get:
 	go get -u -v github.com/tdewolff/minify
 	go get -u -v github.com/tdewolff/minify/css
 	go get -u -v github.com/xcd0/go-nkf
-	go get -u -v github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+	go get -u -v github.com/x-motemen/gobump/cmd/gobump
+	go get -u -v github.com/itchyny/gojq/cmd/gojq
