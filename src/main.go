@@ -14,7 +14,7 @@ import ( // {{{
 	//"text/template"
 ) // }}}
 
-const version = "5.3.1"
+const version = "5.3.2"
 
 func main() {
 	flag.Parse()
@@ -85,7 +85,6 @@ func makeHtml(fi *Fileinfo) { // {{{
 } // }}}
 
 func sortStirngsLen(in []string) []string { // {{{
-
 	type imgPath struct {
 		path   string
 		length int

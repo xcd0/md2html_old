@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"gopkg.in/russross/blackfriday.v2"
+	"github.com/russross/blackfriday/v2"
 )
 
 func filter2body(in string) string { // {{{
@@ -13,7 +13,7 @@ func filter2body(in string) string { // {{{
 
 	// 独自置換対象文字列
 	var rep [][]string
-	rep = append(rep, []string{`^===$`, "\n<div style='page-break-before:always'></div>\n"})
+	rep = append(rep, []string{`^<!---->$`, "\n<div style='page-break-before:always'></div>\n"})
 
 	output := ""
 	for _, r := range rep { // 全ての置換対象文字列について回す

@@ -15,9 +15,9 @@ build:
 	bash update_version_info.sh
 	mkdir -p $(DST)
 ifeq ($(shell uname -o),Msys)
-	go build -o $(DST)/$(BIN).exe
+	CGO_ENABLED=0 go build -o $(DST)/$(BIN).exe
 else
-	go build -o $(DST)/$(BIN)
+	CGO_ENABLED=0 go build -o $(DST)/$(BIN)
 endif
 	cp -rf $(DST)/$(BIN) ..
 
@@ -30,9 +30,9 @@ all: release-build
 release-build:
 	bash update_version_info.sh
 	go generate
-	GOARCH=$(GOARCH) GOOS=windows CGO_ENABLED=0 go build -o $(DST)/$(BIN)_windows.exe $(FLAGS_WIN) $(FLAGS)
-	GOARCH=$(GOARCH) GOOS=darwin CGO_ENABLED=0 go build -o $(DST)/$(BIN)_macOS $(FLAGS_UNIX) $(FLAGS)
-	GOARCH=$(GOARCH) GOOS=linux CGO_ENABLED=0 go build -o $(DST)/$(BIN)_linux $(FLAGS_UNIX) $(FLAGS)
+	CGO_ENABLED=0 GOARCH=$(GOARCH) GOOS=windows CGO_ENABLED=0 go build -o $(DST)/$(BIN)_windows.exe $(FLAGS_WIN) $(FLAGS)
+	CGO_ENABLED=0 GOARCH=$(GOARCH) GOOS=darwin CGO_ENABLED=0 go build -o $(DST)/$(BIN)_macOS $(FLAGS_UNIX) $(FLAGS)
+	CGO_ENABLED=0 GOARCH=$(GOARCH) GOOS=linux CGO_ENABLED=0 go build -o $(DST)/$(BIN)_linux $(FLAGS_UNIX) $(FLAGS)
 
 release: release-build
 	# for windows

@@ -41,7 +41,7 @@ type Info struct { // {{{
 /*!
 @brief スライド用のhtmlファイルと、スライド用のPDFを生成するための1ページごとのhtmlファイルを生成する
 @note 現状まだpdfは生成してないので無駄処理が含まれる
-@noteスライド用のhtmlファイルはjavascriptでhiddenとvisibleを切り替えて表示する
+@note スライド用のhtmlファイルはjavascriptでhiddenとvisibleを切り替えて表示する
 */
 func MakePdfForSlide(fi *Fileinfo) { // {{{
 	//fmt.Println("MakePdfForSlide")
@@ -244,42 +244,25 @@ func outputOnePage(info *Info) { // {{{
 	info.preamble += fmt.Sprintf("<!-- // $title:\"%v\" -->\n", info.bool_print_title)
 	info.preamble += fmt.Sprintf("<!-- // $state_title:\"%v\" -->\n", info.state_title)
 	info.preamble += "<!-- 自動生成されたプリアンブル ここまで -->\n"
-	// 表紙以外のページで引き継ぐかどうか処理する
-	/*
-		if info.absolute_page != 0 {
-			switch info.state_title {
-				case 2: // このページ内に ## があった h2 h3 両方とも引き継がない。
-				// 既に###はリセットされているので無視してよい
-				case 3: // このページ内に ### があった h2のみ引き継ぐ
-				info.h3 = "none"
-			default:
-				// 何もしない
-			}
-		}
-	*/
 
 	// h2 と h3のみ前のページから引き継いで表記ことができる
 	title := ""
 	if info.absolute_page != 0 && info.bool_print_title {
 		title += "\n<!-- 前のページから引き継いだタイトル ここから -->\n"
-		if info.h2 != "none" { // h2が指定されてなかったら何もしない
-			switch info.state_title {
-			case -1: // このページ内に ## と ### がなかった
-				// 前のページから引き継ぐ
-				if info.h2 != "none" {
-					title += "## " + info.h2 + "\n"
-				}
-				if info.h3 != "none" {
-					title += "### " + info.h3 + "\n"
-				}
-			case 2: // このページ内に ## があった h2 h3 ともに引き継がない。
+
+		if info.state_title == -1 {
+			if info.h2 != "none" {
+				title += "## " + info.h2 + "\n"
+			}
+			if info.h3 != "none" {
+				title += "### " + info.h3 + "\n"
+			}
+		} else if info.state_title == 2 { // h2が指定されてなかったら何もしない
+			// このページ内に ## があった h2 h3 ともに引き継がない。
 			// 何もしない
-			case 3: // このページ内に ### があった h3は 引き継がない。h2を引き継ぐ
-				if info.h2 != "none" {
-					title += "## " + info.h2 + "\n"
-				}
-			default:
-				// 何もしない
+		} else if info.state_title == 3 { // このページ内に ### があった h3は 引き継がない。h2を引き継ぐ
+			if info.h2 != "none" {
+				title += "## " + info.h2 + "\n"
 			}
 		}
 		title += "<!-- 前のページから引き継いだタイトル ここまで -->\n"
@@ -395,9 +378,7 @@ func parseMd(info *Info, fi *Fileinfo) { // {{{
 		if regH3.MatchString(info.line) {
 			// 上書き
 			info.h3 = info.line[4:]
-			if info.state_title != 2 {
-				info.state_title = 3
-			}
+			info.state_title = 3
 		}
 		if regCode.MatchString(info.line) {
 			// 論理反転
@@ -412,6 +393,7 @@ func parseMd(info *Info, fi *Fileinfo) { // {{{
 			info.output += info.line + "\n"
 		}
 	}
+
 	// 最後の1ページを出力する
 	dividePage(info)
 
