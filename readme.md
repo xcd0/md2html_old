@@ -24,7 +24,7 @@ html単体で画像やCSSを含んだ可搬性のある文書が生成できま�
 * [readme.md](https://static.xcd0.com/2019/11/md2html_v5/readme.md)
 * [build.gif](https://static.xcd0.com/2019/11/md2html_v5/build.gif)
 
-これらのファイルから
+これらのファイルから(ブラウザで文字化けするときはutf-8を指定)
 
 * [readme.html](https://static.xcd0.com/2019/11/md2html_v5/readme.html)
 * [readme_slide.html](https://static.xcd0.com/2019/11/md2html_v5/readme_slide.html)
@@ -169,12 +169,12 @@ markdownファイル内の`h1`要素は1ファイルに1つ以下とする。
 
 <!---->
 
-### ページサイズ
+### ページ区切り
 
 | 実装 | 記号                               | 意味                                       |
 | ---  | ---                                | ---                                        |
 | 〇   | `<!---->`                          | ページ区切り。印刷時は改ページされる。     |
-| ×   | `<!-- $h2_page_break:"真偽値" -->` | `h2`(マークダウンで言う`##`)で改行するか。 |
+| ×    | `<!-- $h2_page_break:"真偽値" -->` | `h2`(マークダウンで言う`##`)で改行するか。 |
 
 
 <!--

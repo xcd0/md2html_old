@@ -17,7 +17,7 @@ build=0
 
 # versioninfo.jsonを書き換える
 cp versioninfo.json versioninfo_old.json
-cat versioninfo_old.json \
+cat versioninfo_template.json \
 | gojq ".FixedFileInfo.FileVersion.Major|=$major" \
 | gojq ".FixedFileInfo.FileVersion.Minor|=$minor" \
 | gojq ".FixedFileInfo.FileVersion.Patch|=$patch" \

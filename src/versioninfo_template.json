@@ -1,0 +1,43 @@
+{
+  "FixedFileInfo": {
+    "FileFlags ": "00",
+    "FileFlagsMask": "3f",
+    "FileOS": "040004",
+    "FileSubType": "00",
+    "FileType": "01",
+    "FileVersion": {
+      "Build": 0,
+      "Major": 5,
+      "Minor": 3,
+      "Patch": 1
+    },
+    "ProductVersion": {
+      "Build": 0,
+      "Major": 5,
+      "Minor": 3,
+      "Patch": 1
+    }
+  },
+  "IconPath": "",
+  "ManifestPath": "",
+  "StringFileInfo": {
+    "Comments": "",
+    "CompanyName": "",
+    "FileDescription": "マークダウンのファイルをhtmlに変換します",
+    "FileVersion": "5.3.1.1cee3a9",
+    "InternalName": "md2html",
+    "LegalCopyright": "Copyright (C) 2020 xcd0",
+    "LegalTrademarks": "",
+    "OriginalFilename": "md2html.exe",
+    "PrivateBuild": "",
+    "ProductName": "md2html",
+    "ProductVersion": "5.3.1.1cee3a9",
+    "SpecialBuild": ""
+  },
+  "VarFileInfo": {
+    "Translation": {
+      "CharsetID": "04B0",
+      "LangID": "0411"
+    }
+  }
+}

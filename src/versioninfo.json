@@ -9,13 +9,13 @@
       "Build": 0,
       "Major": 5,
       "Minor": 3,
-      "Patch": 1
+      "Patch": 2
     },
     "ProductVersion": {
       "Build": 0,
       "Major": 5,
       "Minor": 3,
-      "Patch": 1
+      "Patch": 2
     }
   },
   "IconPath": "",
@@ -24,14 +24,14 @@
     "Comments": "",
     "CompanyName": "",
     "FileDescription": "マークダウンのファイルをhtmlに変換します",
-    "FileVersion": "5.3.1.1cee3a9",
+    "FileVersion": "5.3.2.05e2fba",
     "InternalName": "md2html",
     "LegalCopyright": "Copyright (C) 2020 xcd0",
     "LegalTrademarks": "",
     "OriginalFilename": "md2html.exe",
     "PrivateBuild": "",
     "ProductName": "md2html",
-    "ProductVersion": "5.3.1.1cee3a9",
+    "ProductVersion": "5.3.2.05e2fba",
     "SpecialBuild": ""
   },
   "VarFileInfo": {
