@@ -330,8 +330,48 @@ func ReplaceImg(outputList []string, html string) string { // {{{
 
 } // }}}
 
+func getAtlUrl(str string) [][]string {
+	out := [][]string{}
+	// hoge ![aaa](aaaasdf) fuga  ![bbb](bbbasdf) piyo
+	// -> { { , , hoge }, { aaa , aaaasdf, fuga }, { bbb , bbbasdf, piyo } } に分ける
+	sp := strings.Split(str, "!")
+	for _, v := range sp {
+		if len(v) == 0 {
+			continue
+		}
+		//log.Println(v)
+		l := len(v)
+		sAlt := strings.Index(v, "[") + 1
+		eAlt := strings.Index(v, "]")
+		sUrl := strings.Index(v, "](") + 2
+		eUrl := strings.Index(v, ")")
+		if sAlt < eAlt && eAlt < sUrl && sUrl < eUrl && eUrl < l {
+			// ファイルの拡張子ごとにヘッダをつける
+			// gif,png,jpg,jpegのみ
+			ext := filepath.Ext(v[sUrl:eUrl]) // 一致した画像ファイルのパスから拡張子を調べる
+			code := func() string {
+				base64code := EncodeBase64(v[sUrl:eUrl])
+				if ext == ".gif" {
+					return "data:image/gif;base64," + base64code
+				} else if ext == ".png" {
+					return "data:image/png;base64," + base64code
+				} else if ext == ".jpg" || ext == ".jpeg" {
+					return "data:image/jpeg;base64," + base64code
+				}
+				log.Fatalf("Error : 対応していない画像形式です。: %s", v[sUrl:eUrl])
+				return ""
+			}()
+			out = append(out, []string{v[sAlt:eAlt], code, v[eUrl+1:]})
+		} else {
+			out = append(out, []string{"", "", v})
+		}
+	}
+	return out
+}
+
 func ReplaceImg4mdPre(outputList []string, stringmd string) string { // {{{1
 	output := ""
+	r := regexp.MustCompile(`!\[[^!\[\]\n\r\\\(\)\*{}&$#@]*\]([^!\n\r\[\]\*{}&%$#@]*)`)
 
 	// ここで一行ずつ処理
 	lines := strings.Split(stringmd, "\n")
@@ -340,6 +380,21 @@ func ReplaceImg4mdPre(outputList []string, stringmd string) string { // {{{1
 		if strings.Contains(line, "![") == false {
 			// ![が含まれていない
 			output += line + "\n"
+		} else if true {
+			// hoge ![aaa](aaaasdf) fuga  ![bbb](bbbasdf) piyo
+			// -> { { , , hoge }, { aaa , aaaasdf, fuga }, { bbb , bbbasdf, piyo } } に分ける
+			ret := getAtlUrl(line)
+
+			index := strings.Index(line, "!")
+			if index < 0 {
+				output += line + "\n" // !がない 残りの部分をくっつける
+				continue
+			}
+			//fmt.Printf(">> ret : %v\n", ret)
+			for _, imgAltUrl := range ret {
+				output += fmt.Sprintf("![%s](%s)%s", imgAltUrl[0], imgAltUrl[1], imgAltUrl[2])
+			}
+			output += "\n"
 		} else {
 			// lineに含まれるパスの前後を切り出す
 			// 例
@@ -350,7 +405,6 @@ func ReplaceImg4mdPre(outputList []string, stringmd string) string { // {{{1
 			// 一行に複数の画像がある場合
 			// ![]()にある程度マッチする正規表現
 			// バックスラッシュを蹴るのはどうやったらいいのかわからない...
-			r := regexp.MustCompile(`!\[[^!\[\]\n\r\\\(\)\*{}&$#@]*\]([^!\n\r\[\]\*{}&%$#@]*)`)
 			ret := r.FindAllStringSubmatch(line, -1)
 			// これでこの行にある！の数がわかる len(ret)
 
@@ -363,6 +417,8 @@ func ReplaceImg4mdPre(outputList []string, stringmd string) string { // {{{1
 			lineout := ""
 			//fmt.Printf(">> ret : %v\n", ret)
 			for _, g := range ret {
+				tmpstr := g[1][1 : len(g[1])-1]
+				log.Print(tmpstr)
 				tmpPath := fmt.Sprintf("%v", g[1][1:len(g[1])-1])
 				base64code := EncodeBase64(tmpPath)
 				// ファイルの拡張子ごとにヘッダをつける
@@ -541,6 +597,7 @@ func shurcooL_GFM(md []byte) ([]byte, error) { // {{{
 
 func EncodeBase64(str string) string { // {{{
 
+	log.Print(str)
 	file, err := os.Open(str)
 	defer file.Close()
 	if err != nil {

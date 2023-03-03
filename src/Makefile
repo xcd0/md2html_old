@@ -21,6 +21,9 @@ else
 endif
 	cp -rf $(DST)/$(BIN) ..
 
+cp: build
+	cp -rf $(DST)/$(BIN) `which $(BIN)`
+
 run: build
 	cd .. && ./$(BIN) readme.md
 
@@ -55,6 +58,7 @@ release: release-build
 	rm $(DST)/$(BIN)_windows.exe && \
 	rm $(DST)/$(BIN)_macOS && \
 	rm $(DST)/$(BIN)_linux
+
 
 clean:
 	rm -rf build

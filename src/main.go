@@ -14,7 +14,7 @@ import ( // {{{
 	//"text/template"
 ) // }}}
 
-const version = "5.3.2"
+const version = "5.3.3"
 
 func main() {
 	flag.Parse()
