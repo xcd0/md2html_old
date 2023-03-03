@@ -72,5 +72,6 @@ get:
 	go get -u -v github.com/tdewolff/minify
 	go get -u -v github.com/tdewolff/minify/css
 	go get -u -v github.com/xcd0/go-nkf
-	go get -u -v github.com/x-motemen/gobump/cmd/gobump
-	go get -u -v github.com/itchyny/gojq/cmd/gojq
+	go install  github.com/x-motemen/gobump/cmd/gobump@latest
+	go install github.com/itchyny/gojq/cmd/gojq@latest
+	go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo@latest
